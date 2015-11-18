@@ -1,6 +1,0 @@
-#!/bin/sh
-
-export DOCKER_MACHINE_NAME="docker-vm"
-export REPOSITORY_BASEURL=github.com
-export WORK_BASE_FOLDER=/tmp
-export DOCKER_FOLDER=docker

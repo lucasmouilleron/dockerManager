@@ -1,0 +1,6 @@
+{
+  "dockerMachineName": "docker-vm",
+  "repositoryBaseURL": "github.com",
+  "workBaseFolder": "/tmp",
+  "dockerFolder": "docker"
+}
