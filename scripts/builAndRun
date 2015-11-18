@@ -1,12 +1,16 @@
 #!/bin/sh
 
 ############################################################################
+REPOSITORY_PATH=$1
+ENVIRONMENT=$2
+
+############################################################################
 CURRENT_FOLDER=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 source $CURRENT_FOLDER/../config/config
 
 ############################################################################
-REPOSITORY_PATH=$1
 REPOSITORY_NAME=$(echo "$REPOSITORY_PATH" | tr \/ \:)
+CONTAINER_NAME=$(echo "$REPOSITORY_NAME" | tr \: 0)
 WORK_FOLDER=$WORK_BASE_FOLDER/$REPOSITORY_PATH
 WORK_DOCKER_FOLDER=$WORK_FOLDER/$DOCKER_FOLDER
 
@@ -21,4 +25,4 @@ cd $WORK_DOCKER_FOLDER
 docker-machine start $DOCKER_MACHINE_NAME
 eval "$(docker-machine env $DOCKER_MACHINE_NAME)"
 docker build -t="$REPOSITORY_NAME" .
-docker run --rm --name "$REPOSITORY_NAME" -e TSDCWUI_ENVIRONMENT=local -ti -p 8081:80 -p 8082:443 "$REPOSITORY_NAME"
+docker run --rm --name "$CONTAINER_NAME" -e TSDC_ENVIRONMENT=$ENVIRONMENT -ti -p 8080:8080 -p 5601:5601 "$REPOSITORY_NAME"
