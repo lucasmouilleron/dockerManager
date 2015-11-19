@@ -19,6 +19,7 @@ TODO
 ----
 - configs per repo for port forwarding (one repos.json ?)
 - configs per repo for data shared folder (one repos.json ?)
+- Paths in buildImage
 - API :
     - start and stop projects
     - list running projects

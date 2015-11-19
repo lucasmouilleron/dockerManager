@@ -51,12 +51,16 @@ function run($command)
     if (count($args) > 1) $command = implode(" ", $args);
     $command .= " 2>&1";
     appendToLog(LG_MAIN, LG_FNE, "running command", $command);
-    ob_start();
+    //ob_start();
     $moreOutput = exec($command, $output, $code);
-    $moremoreoutput = ob_get_clean();
+    //$moremoreoutput = ob_get_clean();
     $ouput[] = $moreOutput;
-    $ouput[] = $moremoreoutput;
-    return arrayToObject(array("code" => $code, "output" => $output, "success" => ($code == 0)));
+    $rawOutput = "";
+    foreach ($output as $outputLine) {
+        $rawOutput .= $outputLine . "\n";
+    }
+    //$ouput[] = $moremoreoutput;
+    return arrayToObject(array("code" => $code, "output" => $output, "rawOutput" => $rawOutput, "success" => ($code == 0)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

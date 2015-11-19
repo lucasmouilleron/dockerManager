@@ -1,0 +1,26 @@
+[
+  {
+    "name": "tsdcwui",
+    "repository": "lucasmouilleron/TSDataCenterWebUI",
+    "ports": [
+      [
+        8081,
+        80
+      ]
+    ]
+  },
+  {
+    "name": "tsdcwuissl",
+    "repository": "lucasmouilleron/TSDataCenterWebUI",
+    "ports": [
+      [
+        8081,
+        80
+      ],
+      [
+        8082,
+        443
+      ]
+    ]
+  }
+]

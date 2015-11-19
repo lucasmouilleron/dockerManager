@@ -11,6 +11,7 @@ class dockerManager
     public $dockerFolder;
     public $imageName;
     public $containerName;
+    public $containerID;
     ///////////////////////////////////////////////////////////////////////////////
     protected static $envVarPattern = '#export (.*?)\=\"(.*?)\"#';
 
@@ -47,15 +48,78 @@ class dockerManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function runImage($imageName, $containerName, $envs = array(), $ports = array(), $paths = array())
+    function startContainer($imageName, $containerName, $envs = array(), $ports = array(), $paths = array())
     {
         $this->setContainerName($containerName);
         $this->setImageName($imageName);
-        //$result = run(makeCommand("docker", "run", "--name", $this->containerName,"-ti", "-d", $this->imageName));
-        $result = run(makeCommand("docker", "run", "--name", $this->containerName, "-ti", "-d", "-p", "8081:80", "-p", "8082:443", $this->imageName));
-        //TODO PORTS AND ENVS AND PATHS
-        if (!$result->success) throw new Exception(message("Can't run docker container", $result->output));
-        //docker run--rm--name "$CONTAINER_NAME" - e TSDC_ENVIRONMENT = $ENVIRONMENT - ti - p 8080:8080 - p 5601:5601 "$REPOSITORY_NAME"
+        $portsCommand = "";
+        foreach ($ports as $port) {
+            if (count($port) == 2) {
+                $portsCommand .= " -p " . $port[0] . ":" . $port[1];
+            }
+        }
+        $envsCommand = "";
+        foreach ($envs as $env) {
+            if (count($env) == 2) {
+                $envsCommand .= " -e " . $env[0] . "=" . $env[1];
+            }
+        }
+        $this->stopAndRemoveContainer($this->containerName);
+        $result = run(makeCommand("docker", "run", "--name", $this->containerName, "-ti", "-d", $portsCommand, $envsCommand, $this->imageName));
+        if (!$result->success) throw new Exception(message("Can't run docker container", $this->containerName, $result->output));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function stopAndRemoveContainer($containerName)
+    {
+        $this->setContainerName($containerName);
+        $this->containerID = $this->getContainerID($this->containerName);
+        if ($this->containerID !== 0) {
+            if ($this->containerIsRunning($this->containerName)) {
+                $result = run(makeCommand("docker", "kill", $this->containerID));
+                if (!$result->success) throw new Exception(message("Can't kill docker container", $this->containerName, $this->containerID, $result->output));
+            }
+            $result = run(makeCommand("docker", "rm", $this->containerID));
+            if (!$result->success) throw new Exception(message("Can't remove docker container", $this->containerName, $this->containerID, $result->output));
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function getContainerID($containerName)
+    {
+        $this->setContainerName($containerName);
+        $infos = $this->getContainerInfos($this->containerName);
+        if (count($infos) == 0) return 0;
+        return $infos[0]->Id;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function containerExists($containerName)
+    {
+        $this->setContainerName($containerName);
+        return $this->getContainerID($this->containerName) !== 0;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function containerIsRunning($containerName)
+    {
+        $this->setContainerName($containerName);
+        if (!$this->containerExists($this->containerName)) return false;
+        $infos = $this->getContainerInfos($this->containerName);
+        foreach ($infos as $info) {
+            if ($info->State->Running) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function getContainerInfos($containerName)
+    {
+        $this->setContainerName($containerName);
+        $result = run(makeCommand("docker", "inspect", $this->containerName));
+        return json_decode($result->rawOutput, false);
     }
 
     ///////////////////////////////////////////////////////////////////////////////

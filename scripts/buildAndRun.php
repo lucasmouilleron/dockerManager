@@ -3,30 +3,32 @@
 ///////////////////////////////////////////////////////////////////////////////
 require_once __DIR__ . "/../api/libs/vendor/autoload.php";
 require_once __DIR__ . "/../api/libs/dockerManager.php";
-require_once __DIR__ . "/../api/libs/gitManager.php";
+require_once __DIR__ . "/../api/libs/reposManager.php";
 require_once __DIR__ . "/../api/libs/tools.php";
 
 ///////////////////////////////////////////////////////////////////////////////
 $CONFIG_FOLDER = __DIR__ . "/../config";
 $CONFIG_FILE = __DIR__ . "/../config/config.json";
+$PROJECTS_CONFIG_FILE = __DIR__ . "/../config/projects.json";
 
 ///////////////////////////////////////////////////////////////////////////////
 $config = jsonFileToObject($CONFIG_FILE);
-$repository = $argv[1];
+$projectsConfig = jsonFileToObject($PROJECTS_CONFIG_FILE);
+$projectName = $argv[1];
 $environment = $argv[2];
 
 ///////////////////////////////////////////////////////////////////////////////
-$workFolder = makePath($config->workBaseFolder, $repository);
-$gitManager = new gitManager($config->repositoryBaseURL, $CONFIG_FOLDER . "/id_rsa");
+$reposManager = new reposManager($config->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa"), $projectsConfig, $config->workBaseFolder);
+$repositoryInfos = $reposManager->getRepositoryInfos($projectName);
 
 ///////////////////////////////////////////////////////////////////////////////
-$imageName = $containerName = $repository . ":" . $environment;
-$dockerFile = makePath($workFolder, $config->dockerFolder, "Dockerfile");
+appendToLog("main", LG_INFO, "cloning repository", $repositoryInfos->repository);
+$reposManager->cloneRepository($repositoryInfos->repository);
+
+///////////////////////////////////////////////////////////////////////////////
+$imageName = $containerName = $projectName . ":" . $environment;
+$dockerFile = makePath($repositoryInfos->cloneFolder, $config->dockerFolder, "Dockerfile");
 $dockerManager = new dockerManager($config->dockerMachineName);
-
-///////////////////////////////////////////////////////////////////////////////
-appendToLog("main", LG_INFO, "cloning repository", $repository);
-$gitManager->cloneRepository($repository,$workFolder);
 
 ///////////////////////////////////////////////////////////////////////////////
 appendToLog("main", LG_INFO, "starting docker machine", $dockerManager->dockerMachineName);
@@ -34,5 +36,4 @@ $dockerManager->start();
 appendToLog("main", LG_INFO, "build docker image from dockerfile", $dockerFile);
 $dockerManager->buildImageFromDockerFile($dockerFile, $imageName);
 appendToLog("main", LG_INFO, "run docker image", $containerName);
-$dockerManager->runImage($imageName, $containerName);
-//$dockerManager->runImage($imageName, $containerName, $envs, $ports, $paths);
+$dockerManager->startContainer($imageName, $containerName, array(array("ENVIRONMENT", $environment)), $repositoryInfos->ports);
