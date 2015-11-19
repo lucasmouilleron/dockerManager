@@ -21,9 +21,11 @@ $dockerManager = new dockerManager($config->dockerMachineName);
 $reposManager = new reposManager($config->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa"), $config->workBaseFolder, $config->dockerFolder);
 $projectsManager = new projectsManager($reposManager, $dockerManager, $projectsConfig);
 
+///////////////////////////////////////////////////////////////////////////////
 $runningProjects = $projectsManager->getRunningProjects();
 print_r($runningProjects);
 
+///////////////////////////////////////////////////////////////////////////////
 $testProjectName = "tsdcwuissl";
 $testEnvironment = "local";
 if ($projectsManager->isProjectRunning($testProjectName, $testEnvironment)) {
