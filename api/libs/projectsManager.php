@@ -11,13 +11,15 @@ class projectsManager
     public $dockerManager;
     public $reposManager;
     public $projects;
+    public $defaultEnvironmentVariable;
 
     ///////////////////////////////////////////////////////////////////////////////
-    function __construct($reposManager, $dockerManager, $projects)
+    function __construct($reposManager, $dockerManager, $projects, $defaultEnvironmentVariable)
     {
         $this->dockerManager = $dockerManager;
         $this->reposManager = $reposManager;
         $this->projects = $projects;
+        $this->defaultEnvironmentVariable = $defaultEnvironmentVariable;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -38,7 +40,11 @@ class projectsManager
         foreach ($this->projects as $project) {
             if ($project->name == $name) {
                 $this->reposManager->setRepository($project->repository);
-                return arrayToObject(array("name" => $project->name, "repository" => $project->repository, "cloneFolder" => $this->reposManager->cloneFolder, "ports" => $project->ports, "dockerFile" => makePath($this->reposManager->cloneFolder, $this->reposManager->dockerFolder, "DockerFile")));
+                $projectEnvironmentVariable = $this->defaultEnvironmentVariable;
+                if (isset($project->environmentVariable)) {
+                    $projectEnvironmentVariable = $project->environmentVariable;
+                }
+                return arrayToObject(array("environmentVariable" => $projectEnvironmentVariable, "name" => $project->name, "repository" => $project->repository, "cloneFolder" => $this->reposManager->cloneFolder, "ports" => $project->ports, "dockerFile" => makePath($this->reposManager->cloneFolder, $this->reposManager->dockerFolder, "DockerFile")));
             }
         }
         throw new Exception(message("Project does not exist", $name));
@@ -115,6 +121,6 @@ class projectsManager
         $infos = $this->getProjectInfos($name);
         $imageName = $this->getImageNameFromProjet($name, $environment);
         $containerName = $this->getContainerNameFromProjet($name, $environment);
-        $this->dockerManager->startContainer($imageName, $containerName, array(array("ENVIRONMENT", $environment)), $infos->ports);
+        $this->dockerManager->startContainer($imageName, $containerName, array(array($infos->environmentVariable, $environment)), $infos->ports);
     }
 }

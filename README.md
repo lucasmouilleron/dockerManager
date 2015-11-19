@@ -1,11 +1,14 @@
 githubManagementDocker
 ======================
 
+githubManagementDocker is a Docker deployment tool for github hosted projects.
+
 Concepts
 --------
-- Docker deployment from github
-- App environment at runtime (and not at buildtime)
- - TODO
+- Docker deployment for github projects
+- Project ports and shared folder configuration 
+- Project environment variable for runtime environment context (and not at buildtime)
+- TODO
 
 Installation
 ------------
@@ -16,13 +19,17 @@ Installation
 - `composer install`
 - `php scripts/install.php`
 
+Project compliancy
+------------------
+- `Dockerfile` must be in `PROJECT_ROOT/docker` folder
+- Project environment variable is by default passed in `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
+- Containers are ran as daemons
+
 TODO
 ----
 - list images
 - cleanup old containers and images
-- configs per repo for port forwarding (one repos.json ?)
-- configs per repo for data shared folder (one repos.json ?)
-- Paths in buildImage
+- Sharedfolder in buildImage
 - API :
     - start and stop projects
     - list running projects

@@ -1,7 +1,8 @@
 {
-  "os":"MacOS",
+  "os": "MacOS",
   "dockerMachineName": "docker-vm",
   "repositoryBaseURL": "github.com",
   "workBaseFolder": "/tmp",
-  "dockerFolder": "docker"
+  "dockerFolder": "docker",
+  "defaultProjectEnvironmentVariable": "ENVIRONMENT"
 }

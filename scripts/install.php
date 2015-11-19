@@ -19,7 +19,7 @@ $projectsConfig = jsonFileToObject($PROJECTS_CONFIG_FILE);
 ///////////////////////////////////////////////////////////////////////////////
 $dockerManager = new dockerManager($config->dockerMachineName);
 $reposManager = new reposManager($config->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa"), $config->workBaseFolder, $config->dockerFolder);
-$projectsManager = new projectsManager($reposManager, $dockerManager, $projectsConfig);
+$projectsManager = new projectsManager($reposManager, $dockerManager, $projectsConfig, $config->defaultProjectEnvironmentVariable);
 
 ///////////////////////////////////////////////////////////////////////////////
 appendToLog(LG_MAIN, LG_INFO, "seting up repo manager");
