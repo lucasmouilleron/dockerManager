@@ -1,11 +1,18 @@
 githubManagementDocker
 ======================
 
+Concepts
+--------
+- Docker deployment from github
+- App environment at runtime (and not at buildtime)
+ - TODO
+
 Installation
 ------------
 - Install Docker
-- Create config/id_rsa file with an authorized key on github
-- Edit config/config
+- Install php and composer
+- Create `config/id_rsa` file with an authorized key on repository provider (github)
+- Edit `config/config.json` if needed
 - `composer install`
 
 TODO
@@ -15,4 +22,8 @@ TODO
 - API :
     - start and stop projects
     - list running projects
-    - add project
+    - add project (and auto port finding)
+    
+Thinking
+--------
+- App environment at runtime for frontend webapps

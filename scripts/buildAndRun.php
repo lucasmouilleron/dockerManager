@@ -34,8 +34,5 @@ $dockerManager->start();
 appendToLog("main", LG_INFO, "build docker image from dockerfile", $dockerFile);
 $dockerManager->buildImageFromDockerFile($dockerFile, $imageName);
 appendToLog("main", LG_INFO, "run docker image", $containerName);
-//$dockerManager->runImage($imageName, $containerName, $envs, $ports, $paths);
 $dockerManager->runImage($imageName, $containerName);
-
-//TODO RUN
-//    docker run--rm--name "$CONTAINER_NAME" - e TSDC_ENVIRONMENT = $ENVIRONMENT - ti - p 8080:8080 - p 5601:5601 "$REPOSITORY_NAME"
+//$dockerManager->runImage($imageName, $containerName, $envs, $ports, $paths);

@@ -26,7 +26,7 @@ class dockerManager
         $result = run(makeCommand("docker-machine", "start", $this->dockerMachineName));
         if (!$result->success) throw new Exception("Can't start docker machine : " . $result->output);
         $result = run("docker-machine env " . $this->dockerMachineName);
-        if (!$result->success) throw new Exception("Can't start docker machine : " . $result->output);
+        if (!$result->success) throw new Exception(message("Can't start docker machine", $result->output));
         foreach ($result->output as $output) {
             preg_match(dockerManager::$envVarPattern, $output, $matches);
             if (count($matches) >= 3 && $matches[1] !== "") {
@@ -43,7 +43,7 @@ class dockerManager
         $this->setImageName($imageName);
         chdir($this->dockerFolder);
         $result = run(makeCommand("docker", "build", "-t", $this->imageName, "."));
-        if (!$result->success) throw new Exception("Can't build docker image : " . $result->output);
+        if (!$result->success) throw new Exception(message("Can't build docker image", $result->output));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -51,8 +51,10 @@ class dockerManager
     {
         $this->setContainerName($containerName);
         $this->setImageName($imageName);
-        $result = run(makeCommand("docker", "run", "--name", $this->containerName, "--rm", "-ti", "-d", $this->imageName));
-        if (!$result->success) throw new Exception("Can't run docker container : " . $result->output);
+        //$result = run(makeCommand("docker", "run", "--name", $this->containerName,"-ti", "-d", $this->imageName));
+        $result = run(makeCommand("docker", "run", "--name", $this->containerName, "-ti", "-d", "-p", "8081:80", "-p", "8082:443", $this->imageName));
+        //TODO PORTS AND ENVS AND PATHS
+        if (!$result->success) throw new Exception(message("Can't run docker container", $result->output));
         //docker run--rm--name "$CONTAINER_NAME" - e TSDC_ENVIRONMENT = $ENVIRONMENT - ti - p 8080:8080 - p 5601:5601 "$REPOSITORY_NAME"
     }
 
