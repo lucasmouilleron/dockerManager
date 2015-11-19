@@ -23,6 +23,7 @@ $projectsManager = new projectsManager($reposManager, $dockerManager, $projectsC
 
 ///////////////////////////////////////////////////////////////////////////////
 $runningProjects = $projectsManager->getRunningProjects();
+appendToLog(LG_MAIN, LG_INFO, "running projects", $runningProjects);
 print_r($runningProjects);
 
 ///////////////////////////////////////////////////////////////////////////////

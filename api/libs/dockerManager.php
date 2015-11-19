@@ -12,26 +12,31 @@ class dockerManager
     public $imageName;
     public $containerName;
     public $containerID;
+    public $os;
+
     ///////////////////////////////////////////////////////////////////////////////
     protected static $envVarPattern = '#export (.*?)\=\"(.*?)\"#';
 
     ///////////////////////////////////////////////////////////////////////////////
-    function __construct($docherMachineName = "default")
+    function __construct($os = "linux", $docherMachineName = "default")
     {
+        $this->os = strtolower($os);
         $this->dockerMachineName = $docherMachineName;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     function start()
     {
-        $result = run(makeCommand("docker-machine", "start", $this->dockerMachineName));
-        if (!$result->success) throw new Exception("Can't start docker machine : " . $result->output);
-        $result = run("docker-machine env " . $this->dockerMachineName);
-        if (!$result->success) throw new Exception(message("Can't start docker machine", $result->output));
-        foreach ($result->output as $output) {
-            preg_match(dockerManager::$envVarPattern, $output, $matches);
-            if (count($matches) >= 3 && $matches[1] !== "") {
-                putenv($matches[1] . "=" . $matches[2]);
+        if ($this->os == "macos") {
+            $result = run(makeCommand("docker-machine", "start", $this->dockerMachineName));
+            if (!$result->success) throw new Exception("Can't start docker machine : " . $result->output);
+            $result = run("docker-machine env " . $this->dockerMachineName);
+            if (!$result->success) throw new Exception(message("Can't start docker machine", $result->output));
+            foreach ($result->output as $output) {
+                preg_match(dockerManager::$envVarPattern, $output, $matches);
+                if (count($matches) >= 3 && $matches[1] !== "") {
+                    putenv($matches[1] . "=" . $matches[2]);
+                }
             }
         }
     }
@@ -56,7 +61,7 @@ class dockerManager
         array_shift($outputs);
         foreach ($outputs as $output) {
             $bits = preg_split('/[\s]+/', $output);
-            $containers[] = arrayToObject(array("id" => $bits[0], "imageName" => $bits[1], "containerName" => $bits[count($bits)-1]));
+            $containers[] = arrayToObject(array("id" => $bits[0], "imageName" => $bits[1], "containerName" => $bits[count($bits) - 1]));
         }
         return $containers;
     }

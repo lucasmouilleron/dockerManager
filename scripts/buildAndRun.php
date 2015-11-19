@@ -20,12 +20,12 @@ $environment = $argv[2];
 
 ///////////////////////////////////////////////////////////////////////////////
 $dockerManager = new dockerManager($config->dockerMachineName);
-$reposManager = new reposManager($config->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa2"), $config->workBaseFolder, $config->dockerFolder);
+$reposManager = new reposManager($config->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa"), $config->workBaseFolder, $config->dockerFolder);
 $projectsManager = new projectsManager($reposManager, $dockerManager, $projectsConfig);
 $repositoryInfos = $projectsManager->getProjectInfos($projectName);
 
 ///////////////////////////////////////////////////////////////////////////////
-appendToLog(LG_MAIN, LG_INFO, "starting docker machine", $dockerManager->dockerMachineName);
+appendToLog(LG_MAIN, LG_INFO, "starting docker", $dockerManager->dockerMachineName);
 $projectsManager->startDocker();
 
 ///////////////////////////////////////////////////////////////////////////////
