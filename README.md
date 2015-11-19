@@ -17,6 +17,8 @@ Installation
 
 TODO
 ----
+- list images
+- cleanup old containers and images
 - configs per repo for port forwarding (one repos.json ?)
 - configs per repo for data shared folder (one repos.json ?)
 - Paths in buildImage

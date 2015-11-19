@@ -9,32 +9,19 @@ class reposManager
     public $repository;
     public $idRSAFile;
     public $repositoriesBase;
-    public $projects;
     public $workBaseFolder;
     public $cloneFolder;
+    public $dockerFolder;
 
     ///////////////////////////////////////////////////////////////////////////////
-    function __construct($repositoriesBase, $idRSAFile, $projects, $workBaseFolder)
+    function __construct($repositoriesBase, $idRSAFile, $workBaseFolder, $dockerFolder)
     {
-        $this->projects = $projects;
+        $this->dockerFolder = $dockerFolder;
         $this->workBaseFolder = $workBaseFolder;
         $this->repositoriesBase = $repositoriesBase;
         $this->idRSAFile = $idRSAFile;
         $result = run(makeCommand("ssh-keyscan", $this->repositoriesBase, ">>", "~/.ssh/known_hosts"));
         if (!$result->success) throw new Exception("Can't add repositories base to know hosts : " . $result->output);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    function getRepositoryInfos($name)
-    {
-        foreach ($this->projects as $project) {
-            if ($project->name == $name) {
-                $repository = $project->repository;
-                $this->setRepository($repository);
-                return arrayToObject(array("repository" => $this->repository, "cloneFolder" => $this->cloneFolder, "ports"=>$project->ports));
-            }
-        }
-        return null;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

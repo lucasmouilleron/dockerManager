@@ -14,11 +14,11 @@
     "repository": "lucasmouilleron/TSDataCenterWebUI",
     "ports": [
       [
-        8081,
+        8082,
         80
       ],
       [
-        8082,
+        8083,
         443
       ]
     ]

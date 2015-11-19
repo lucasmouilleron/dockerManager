@@ -15,25 +15,19 @@ $PROJECTS_CONFIG_FILE = __DIR__ . "/../config/projects.json";
 ///////////////////////////////////////////////////////////////////////////////
 $config = jsonFileToObject($CONFIG_FILE);
 $projectsConfig = jsonFileToObject($PROJECTS_CONFIG_FILE);
-$projectName = $argv[1];
-$environment = $argv[2];
 
 ///////////////////////////////////////////////////////////////////////////////
 $dockerManager = new dockerManager($config->dockerMachineName);
 $reposManager = new reposManager($config->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa"), $config->workBaseFolder, $config->dockerFolder);
 $projectsManager = new projectsManager($reposManager, $dockerManager, $projectsConfig);
-$repositoryInfos = $projectsManager->getProjectInfos($projectName);
 
-///////////////////////////////////////////////////////////////////////////////
-appendToLog(LG_MAIN, LG_INFO, "starting docker machine", $dockerManager->dockerMachineName);
-$projectsManager->startDocker();
+$runningProjects = $projectsManager->getRunningProjects();
+print_r($runningProjects);
 
-///////////////////////////////////////////////////////////////////////////////
-appendToLog(LG_MAIN, LG_INFO, "cloning repository", $repositoryInfos->repository, "for projcet", $projectName);
-$projectsManager->cloneRepository($projectName);
-
-///////////////////////////////////////////////////////////////////////////////
-appendToLog(LG_MAIN, LG_INFO, "build  project image for project", $projectName, "for environment", $environment);
-$projectsManager->buildImage($projectName, $environment);
-appendToLog(LG_MAIN, LG_INFO, "start container for project", $projectName, "for environment", $environment);
-$projectsManager->startContainer($projectName, $environment);
+$testProjectName = "tsdcwuissl";
+$testEnvironment = "local";
+if ($projectsManager->isProjectRunning($testProjectName, $testEnvironment)) {
+    appendToLog(LG_MAIN, LG_INFO, "project", $testProjectName, "is running in env ", $testEnvironment);
+} else {
+    appendToLog(LG_MAIN, LG_INFO, "project", $testProjectName, "is NOT running in env ", $testEnvironment);
+}

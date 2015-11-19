@@ -48,6 +48,20 @@ class dockerManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    function listRunningContainers()
+    {
+        $containers = array();
+        $result = run(makeCommand("docker", "ps"));
+        $outputs = $result->output;
+        array_shift($outputs);
+        foreach ($outputs as $output) {
+            $bits = preg_split('/[\s]+/', $output);
+            $containers[] = arrayToObject(array("id" => $bits[0], "imageName" => $bits[1], "containerName" => $bits[count($bits)-1]));
+        }
+        return $containers;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     function startContainer($imageName, $containerName, $envs = array(), $ports = array(), $paths = array())
     {
         $this->setContainerName($containerName);
