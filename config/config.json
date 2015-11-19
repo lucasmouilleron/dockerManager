@@ -4,5 +4,6 @@
   "repositoryBaseURL": "github.com",
   "workBaseFolder": "/tmp",
   "dockerFolder": "docker",
-  "defaultProjectEnvironmentVariable": "ENVIRONMENT"
+  "defaultProjectEnvironmentVariable": "ENVIRONMENT",
+  "publicAutoPortOffset": 8080
 }

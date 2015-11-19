@@ -76,6 +76,12 @@ function jsonFileToObject($filePath)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+function objectToJsonFile($object, $filePath)
+{
+    return file_put_contents($filePath, json_encode($object, JSON_PRETTY_PRINT));
+}
+
+///////////////////////////////////////////////////////////////////////////////
 function arrayToObject($array)
 {
     return json_decode(json_encode($array), false);

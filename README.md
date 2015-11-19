@@ -8,6 +8,7 @@ Concepts
 - Docker deployment for github projects
 - Project ports and shared folder configuration 
 - Project environment variable for runtime environment context (and not at buildtime)
+- Project add wizard (auto port offseting)
 - TODO
 
 Installation
@@ -27,13 +28,14 @@ Project compliancy
 
 TODO
 ----
-- list images
-- cleanup old containers and images
-- Sharedfolder in buildImage
+- add project (and auto port finding)
 - API :
+    - REST
+    - tokens
     - start and stop projects
     - list running projects
-    - add project (and auto port finding)
+- list images
+- Sharedfolder in buildImage
     
 Thinking
 --------

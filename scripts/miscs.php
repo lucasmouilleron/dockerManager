@@ -14,16 +14,15 @@ $PROJECTS_CONFIG_FILE = __DIR__ . "/../config/projects.json";
 
 ///////////////////////////////////////////////////////////////////////////////
 $config = jsonFileToObject($CONFIG_FILE);
-$projectsConfig = jsonFileToObject($PROJECTS_CONFIG_FILE);
 
 ///////////////////////////////////////////////////////////////////////////////
 $dockerManager = new dockerManager($config->dockerMachineName);
 $reposManager = new reposManager($config->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa"), $config->workBaseFolder, $config->dockerFolder);
-$projectsManager = new projectsManager($reposManager, $dockerManager, $projectsConfig, $config->defaultProjectEnvironmentVariable);
+$projectsManager = new projectsManager($reposManager, $dockerManager, $PROJECTS_CONFIG_FILE, $config->defaultProjectEnvironmentVariable, $config->publicAutoPortOffset);
 
 ///////////////////////////////////////////////////////////////////////////////
 $runningProjects = $projectsManager->getRunningProjects();
-appendToLog(LG_MAIN, LG_INFO, "running projects", $runningProjects);
+appendToLog(LG_MAIN, LG_INFO, "running projects");
 print_r($runningProjects);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -33,4 +32,15 @@ if ($projectsManager->isProjectRunning($testProjectName, $testEnvironment)) {
     appendToLog(LG_MAIN, LG_INFO, "project", $testProjectName, "is running in env ", $testEnvironment);
 } else {
     appendToLog(LG_MAIN, LG_INFO, "project", $testProjectName, "is NOT running in env ", $testEnvironment);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+appendToLog(LG_MAIN, LG_INFO, "cleaning old containers");
+$removeds = $projectsManager->dockerManager->removeOldContainers();
+print_r($removeds);
+
+if ($projectsManager->addProject("otherOtherTest", "testRepo", array(34, 24), "testEnv")) {
+    appendToLog(LG_MAIN, LG_INFO, "project added");
+} else {
+    appendToLog(LG_MAIN, LG_INFO, "project not added");
 }

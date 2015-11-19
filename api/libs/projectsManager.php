@@ -11,15 +11,25 @@ class projectsManager
     public $dockerManager;
     public $reposManager;
     public $projects;
+    public $projectsFile;
     public $defaultEnvironmentVariable;
+    public $publicAutoPortOffset;
 
     ///////////////////////////////////////////////////////////////////////////////
-    function __construct($reposManager, $dockerManager, $projects, $defaultEnvironmentVariable)
+    function __construct($reposManager, $dockerManager, $projectsFile, $defaultEnvironmentVariable, $publicAutoPortOffset)
     {
         $this->dockerManager = $dockerManager;
         $this->reposManager = $reposManager;
-        $this->projects = $projects;
+        $this->projectsFile = $projectsFile;
+        $this->projects = jsonFileToObject($this->projectsFile);
         $this->defaultEnvironmentVariable = $defaultEnvironmentVariable;
+        $this->publicAutoPortOffset = $publicAutoPortOffset;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function saveProjects()
+    {
+        objectToJsonFile($this->projects, $this->projectsFile);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -59,6 +69,41 @@ class projectsManager
                 return true;
         }
         return false;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function addProject($name, $repository, $ports = array(), $environmentVariable = "")
+    {
+        $name = strtolower($name);
+        foreach ($this->projects as $project) {
+            if ($project->name == $name) {
+                return false;
+            }
+        }
+        if ($environmentVariable == "") {
+            $environmentVariable = $this->defaultEnvironmentVariable;
+        }
+        $usedPorts = array();
+        foreach ($this->projects as $project) {
+            foreach ($project->ports as $port) {
+                if (count($port) == 2) {
+                    $usedPorts[] = $port[0];
+                }
+            }
+        }
+        sort($usedPorts);
+        $nextPort = $this->defaultEnvironmentVariable;
+        if (count($usedPorts) != 0) {
+            $nextPort = $usedPorts[count($usedPorts) - 1] + 1;
+        }
+        $portsAndTranslations = array();
+        foreach ($ports as $port) {
+            $portsAndTranslations[] = array($nextPort, $port);
+            $nextPort++;
+        }
+        $this->projects[] = arrayToObject(array("name" => $name, "repository" => $repository, "ports" => $portsAndTranslations, "environmentVariable" => $environmentVariable));
+        $this->saveProjects();
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

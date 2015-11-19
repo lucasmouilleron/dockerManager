@@ -104,6 +104,20 @@ class dockerManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    function removeOldContainers()
+    {
+        $result = run(makeCommand("docker", "ps", "-aq", "-f", "status=exited"));
+        if (!$result->success) throw new Exception(message("Can't remove old containers", $result->output));
+        if (count($result->output) > 0) {
+            $result = run(makeCommand("docker", "rm", "$(docker ps -aq -f status=exited)"));
+            if (!$result->success) throw new Exception(message("Can't remove old containers", $result->output));
+            return $result->output;
+        } else {
+            return 0;
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     function getContainerID($containerName)
     {
         $this->setContainerName($containerName);

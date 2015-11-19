@@ -14,12 +14,11 @@ $PROJECTS_CONFIG_FILE = __DIR__ . "/../config/projects.json";
 
 ///////////////////////////////////////////////////////////////////////////////
 $config = jsonFileToObject($CONFIG_FILE);
-$projectsConfig = jsonFileToObject($PROJECTS_CONFIG_FILE);
 
 ///////////////////////////////////////////////////////////////////////////////
 $dockerManager = new dockerManager($config->dockerMachineName);
 $reposManager = new reposManager($config->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa"), $config->workBaseFolder, $config->dockerFolder);
-$projectsManager = new projectsManager($reposManager, $dockerManager, $projectsConfig, $config->defaultProjectEnvironmentVariable);
+$projectsManager = new projectsManager($reposManager, $dockerManager, $PROJECTS_CONFIG_FILE, $config->defaultProjectEnvironmentVariable, $config->publicAutoPortOffset);
 
 ///////////////////////////////////////////////////////////////////////////////
 appendToLog(LG_MAIN, LG_INFO, "seting up repo manager");
