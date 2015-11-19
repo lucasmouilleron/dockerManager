@@ -2,10 +2,11 @@ githubManagementDocker
 ======================
 
 githubManagementDocker is a Docker deployment tool for github hosted projects.
+Ideal for web agency testing.
 
 Concepts
 --------
-- Docker deployment for github projects
+- Local Docker deployment for github projects
 - Project ports and shared folder configuration 
 - Project environment variable for runtime environment context (and not at buildtime)
 - Project add wizard (auto port offseting)
@@ -24,7 +25,7 @@ Project compliancy
 ------------------
 - `Dockerfile` must be in `PROJECT_ROOT/docker` folder
 - Project environment variable is by default passed in `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
-- Containers are ran as daemons
+- Containers are ran as daemons 
 
 TODO
 ----
@@ -38,4 +39,6 @@ TODO
     
 Thinking
 --------
-- App environment at runtime for frontend webapps
+- On tester / client machines, use /etc/hosts or GasMask or HostMan so the production domain / URL points to the Docker server
+- Websites : 
+- Webapps : App environment at runtime ?
