@@ -28,7 +28,6 @@ Project compliancy
 
 TODO
 ----
-- add project (and auto port finding)
 - API :
     - REST
     - tokens

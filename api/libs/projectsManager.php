@@ -65,8 +65,9 @@ class projectsManager
     {
         $projectsRunning = $this->getRunningProjects();
         foreach ($projectsRunning as $projectRunning) {
-            if ($projectRunning->environment == $environment && $projectRunning->projectInfos->name == $name)
+            if ($projectRunning->environment == $environment && $projectRunning->projectInfos->name == $name) {
                 return true;
+            }
         }
         return false;
     }
@@ -153,19 +154,28 @@ class projectsManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function buildImage($name, $environment)
+    function buildProject($name, $environment)
     {
         $infos = $this->getProjectInfos($name);
         $imageName = $this->getImageNameFromProjet($name, $environment);
         $this->dockerManager->buildImageFromDockerFile($infos->dockerFile, $imageName);
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function startContainer($name, $environment)
+    function startProject($name, $environment)
     {
         $infos = $this->getProjectInfos($name);
         $imageName = $this->getImageNameFromProjet($name, $environment);
         $containerName = $this->getContainerNameFromProjet($name, $environment);
         $this->dockerManager->startContainer($imageName, $containerName, array(array($infos->environmentVariable, $environment)), $infos->ports);
+        return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function stopProject($name, $environment)
+    {
+        $containerName = $this->getContainerNameFromProjet($name, $environment);
+        return $this->dockerManager->stopAndRemoveContainer($containerName);
     }
 }

@@ -44,3 +44,13 @@ if ($projectsManager->addProject("otherOtherTest", "testRepo", array(34, 24), "t
 } else {
     appendToLog(LG_MAIN, LG_INFO, "project not added");
 }
+
+///////////////////////////////////////////////////////////////////////////////
+$testProjectName = "tsdcwuissl";
+$testEnvironment = "local";
+appendToLog(LG_MAIN, LG_INFO, "stoping project", $testProjectName, $testEnvironment);
+if ($projectsManager->stopProject($testProjectName, $testEnvironment)) {
+    appendToLog(LG_MAIN, LG_INFO, "project stopped");
+} else {
+    appendToLog(LG_MAIN, LG_INFO, "project NOT stopped");
+}

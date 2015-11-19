@@ -33,6 +33,6 @@ $projectsManager->cloneRepository($projectName);
 
 ///////////////////////////////////////////////////////////////////////////////
 appendToLog(LG_MAIN, LG_INFO, "build  project image for project", $projectName, "for environment", $environment);
-$projectsManager->buildImage($projectName, $environment);
+$projectsManager->buildProject($projectName, $environment);
 appendToLog(LG_MAIN, LG_INFO, "start container for project", $projectName, "for environment", $environment);
-$projectsManager->startContainer($projectName, $environment);
+$projectsManager->startProject($projectName, $environment);

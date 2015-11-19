@@ -50,6 +50,7 @@ class dockerManager
         chdir($this->dockerFolder);
         $result = run(makeCommand("docker", "build", "-t", $this->imageName, "."));
         if (!$result->success) throw new Exception(message("Can't build docker image", $result->output));
+        return $this->imageName;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -86,6 +87,7 @@ class dockerManager
         $this->stopAndRemoveContainer($this->containerName);
         $result = run(makeCommand("docker", "run", "--name", $this->containerName, "-ti", "-d", $portsCommand, $envsCommand, $this->imageName));
         if (!$result->success) throw new Exception(message("Can't run docker container", $this->containerName, $result->output));
+        return $this->containerName;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -101,6 +103,7 @@ class dockerManager
             $result = run(makeCommand("docker", "rm", $this->containerID));
             if (!$result->success) throw new Exception(message("Can't remove docker container", $this->containerName, $this->containerID, $result->output));
         }
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
