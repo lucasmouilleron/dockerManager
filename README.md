@@ -27,18 +27,18 @@ Project compliancy
 ------------------
 - `Dockerfile` must be in `PROJECT_ROOT/docker` folder
 - Project environment variable is by default passed in `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
-- Containers are ran as daemons 
+- Containers are ran as daemons
+- Project `github.com:lucasmouilleron/dockerManagerTest` can be used for reference
 
 How to use
 ----------
 - `bin/dm` and follow instructions
-- API
+- API, TODO
 
 TODO
 ----
 - Improve dm commands output
-- Improve dm params declaration
-- Export : export project with export commands and copy to host (to recup files and db)
+- Export : export project with export commands and copy to host (to recup files and db) (exports commands per project (mysqldump, cp folders in /tmp/export) first remove folder (docker exec rm the folder), then docker exec the exports commands, and then docker exec tgz the /tmp/export folder and then docker cp export.tgz to host)
 - cp files from container to host : docker cp CONTAINER:PATH HOSTPATH
 - API :
     - REST

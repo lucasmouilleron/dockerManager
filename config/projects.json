@@ -1,33 +1,38 @@
 [
-    {
-        "name": "tsdcwui",
-        "repository": "lucasmouilleron\/TSDataCenterWebUI",
-        "ports": [
-            [
-                8081,
-                80
-            ]
-        ],
-        "environmentVariable": "TSDCWUI_ENVIRONMENT"
-    },
-    {
-        "name": "tsdcwuissl",
-        "repository": "lucasmouilleron\/TSDataCenterWebUI",
-        "ports": [
-            [
-                8082,
-                80
-            ],
-            [
-                8083,
-                443
-            ]
-        ]
-    },
-    {
-        "name": "testproject",
-        "repository": "testRepo",
-        "ports": [],
-        "environmentVariable": "ENVIRONMENT"
-    }
+  {
+    "name": "tsdcwui",
+    "repository": "lucasmouilleron\/TSDataCenterWebUI",
+    "ports": [
+      [
+        8081,
+        80
+      ]
+    ],
+    "environmentVariable": "TSDCWUI_ENVIRONMENT"
+  },
+  {
+    "name": "tsdcwuissl",
+    "repository": "lucasmouilleron\/TSDataCenterWebUI",
+    "ports": [
+      [
+        8082,
+        80
+      ],
+      [
+        8083,
+        443
+      ]
+    ]
+  },
+  {
+    "name": "projecttest",
+    "repository": "lucasmouilleron\/dockerManagerTest",
+    "ports": [
+      [
+        8084,
+        80
+      ]
+    ],
+    "environmentVariable": "ENVIRONMENT"
+  }
 ]

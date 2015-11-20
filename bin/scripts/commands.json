@@ -21,7 +21,7 @@
     "arguments": []
   },
   {
-    "name": "projects",
+    "name": "ls",
     "description": "list avaiable projects",
     "arguments": []
   },
@@ -42,7 +42,8 @@
       {
         "name": "environment",
         "description": "environment",
-        "mandatory": true
+        "mandatory": false,
+        "defaultValue": "local"
       }
     ]
   },
