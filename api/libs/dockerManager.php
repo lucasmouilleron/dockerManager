@@ -42,6 +42,28 @@ class dockerManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    function stop()
+    {
+        $this->stopAllContainers();
+        if ($this->os == "macos") {
+            $result = run(makeCommand("docker-machine", "stop", $this->dockerMachineName));
+            if (!$result->success) throw new Exception("Can't stop docker machine : " . $result->output);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function stopAllContainers()
+    {
+        $runningContainers = $this->listRunningContainers();
+        $nbStoped = 0;
+        foreach ($runningContainers as $runningContainer) {
+            $this->stopAndRemoveContainer($runningContainer->containerName);
+            $nbStoped++;
+        }
+        return $nbStoped;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     function buildImageFromDockerFile($dockerFile, $imageName)
     {
         $this->dockerFile = $dockerFile;

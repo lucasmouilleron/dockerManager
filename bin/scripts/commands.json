@@ -1,54 +1,5 @@
 [
   {
-    "name": "kill",
-    "description": "kill a running project",
-    "arguments": [
-      {
-        "name": "projectName",
-        "description": "project name",
-        "mandatory": true
-      },
-      {
-        "name": "environment",
-        "description": "environment",
-        "mandatory": false,
-        "defaultValue": "local"
-      }
-    ]
-  },
-  {
-    "name": "install",
-    "description": "install the docker manager",
-    "arguments": []
-  },
-  {
-    "name": "ls",
-    "description": "list avaiable projects",
-    "arguments": []
-  },
-  {
-    "name": "ps",
-    "description": "list running projects",
-    "arguments": []
-  },
-  {
-    "name": "run",
-    "description": "run a project",
-    "arguments": [
-      {
-        "name": "projectName",
-        "description": "project name",
-        "mandatory": true
-      },
-      {
-        "name": "environment",
-        "description": "environment",
-        "mandatory": false,
-        "defaultValue": "local"
-      }
-    ]
-  },
-  {
     "name": "add",
     "description": "add a project",
     "arguments": [
@@ -79,6 +30,60 @@
   {
     "name": "export",
     "description": "export for a project",
+    "arguments": [
+      {
+        "name": "projectName",
+        "description": "project name",
+        "mandatory": true
+      },
+      {
+        "name": "environment",
+        "description": "environment",
+        "mandatory": false,
+        "defaultValue": "local"
+      }
+    ]
+  },
+  {
+    "name": "install",
+    "description": "install the docker manager",
+    "arguments": []
+  },
+  {
+    "name": "kill",
+    "description": "kill a running project",
+    "arguments": [
+      {
+        "name": "projectName",
+        "description": "project name",
+        "mandatory": true
+      },
+      {
+        "name": "environment",
+        "description": "environment",
+        "mandatory": false,
+        "defaultValue": "local"
+      }
+    ]
+  },
+  {
+    "name": "killAll",
+    "description": "kill all running projects",
+    "arguments": []
+  },
+  {
+    "name": "ls",
+    "description": "list avaiable projects",
+    "arguments": []
+  },
+  {
+    "name": "ps",
+    "description": "list running projects",
+    "arguments": []
+  },
+  {
+    "name": "run",
+    "description": "run a project",
     "arguments": [
       {
         "name": "projectName",

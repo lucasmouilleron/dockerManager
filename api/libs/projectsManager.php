@@ -39,6 +39,12 @@ class projectsManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    function stopDocker()
+    {
+        $this->dockerManager->stop();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     function getProjects()
     {
         return $this->projects;
@@ -177,5 +183,11 @@ class projectsManager
     {
         $containerName = $this->getContainerNameFromProjet($name, $environment);
         return $this->dockerManager->stopAndRemoveContainer($containerName);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function stopAllProjects()
+    {
+        return $this->dockerManager->stopAllContainers();
     }
 }
