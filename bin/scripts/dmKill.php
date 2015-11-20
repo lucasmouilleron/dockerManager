@@ -1,8 +1,8 @@
 <?php
 
 ///////////////////////////////////////////////////////////////////////////////
-$projectName = @$ARGUMENTS[0];
-$environment = @$ARGUMENTS[1];
+$projectName = getArgument($COMMAND,$ARGUMENTS,0);
+$environment = getArgument($COMMAND,$ARGUMENTS,1);
 
 ///////////////////////////////////////////////////////////////////////////////
 appendToLog(LG_MAIN, LG_INFO, "starting docker", $DM->dockerMachineName);
