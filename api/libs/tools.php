@@ -1,6 +1,8 @@
 <?php
 
 ////////////////////////////////////////////////////////////////
+require_once __DIR__ . "/vendor/autoload.php";
+////////////////////////////////////////////////////////////////
 define("LG_PATH", __DIR__ . "/../../logs");
 define("LG_FNE", "FNE");
 define("LG_INFO", "NFO");
@@ -10,6 +12,7 @@ define("LG_MAIN", "main");
 
 ////////////////////////////////////////////////////////////////
 date_default_timezone_set("Europe/Paris");
+use Colors\Color;
 
 ////////////////////////////////////////////////////////////////
 function appendToLog($logger, $level, $message)
@@ -19,8 +22,31 @@ function appendToLog($logger, $level, $message)
     $level = array_shift($args);
     $message = messageFromArgs($args);
     $message = date("Y/m/d H:i:s") . " - [" . $level . "] - " . $message . "\r\n";
-    echo $message;
+    echo colorize($message, $level);
     file_put_contents(LG_PATH . "/" . $logger . ".log", $message, FILE_APPEND);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+function colorize($text, $level)
+{
+    $c = new Color();
+    switch ($level) {
+        case LG_INFO:
+            return $c($text)->blue();
+            break;
+        case LG_SEVERE:
+            return $c($text)->red()->bold();
+            break;
+        case LG_WARNING:
+            return $c($text)->yellow()->bold();
+            break;
+        case LG_FNE:
+            return $c($text)->magenta();
+            break;
+        default:
+            return $c($text)->white();
+            break;
+    }
 }
 
 ////////////////////////////////////////////////////////////////

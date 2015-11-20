@@ -31,12 +31,13 @@ Project compliancy
 
 How to use
 ----------
-- `bin/dm help`
+- `bin/dm` and follow instructions
 - API
 
 TODO
 ----
 - Improve dm commands output
+- Improve dm params declaration
 - Export : export project with export commands and copy to host (to recup files and db)
 - cp files from container to host : docker cp CONTAINER:PATH HOSTPATH
 - API :

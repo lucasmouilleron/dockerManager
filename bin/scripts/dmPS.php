@@ -6,4 +6,7 @@ $PM->startDocker();
 
 ///////////////////////////////////////////////////////////////////////////////
 $runningProjects = $PM->getRunningProjects();
-print_r($runningProjects);
+appendToLog(LG_MAIN, LG_INFO, "# projects running", count($runningProjects));
+foreach ($runningProjects as $runningProject) {
+    appendToLog(LG_MAIN, LG_INFO, "name : " . $runningProject->projectInfos->name, "environment : " . $runningProject->environment, "ports : " . json_encode($runningProject->projectInfos->ports));
+}

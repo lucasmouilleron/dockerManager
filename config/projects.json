@@ -27,16 +27,7 @@
     {
         "name": "testproject",
         "repository": "testRepo",
-        "ports": [
-            [
-                8084,
-                "20"
-            ],
-            [
-                8085,
-                "21"
-            ]
-        ],
-        "environmentVariable": "testEnvVariable"
+        "ports": [],
+        "environmentVariable": "ENVIRONMENT"
     }
 ]

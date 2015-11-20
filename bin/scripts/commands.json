@@ -1,0 +1,77 @@
+[
+  {
+    "name": "kill",
+    "description": "kill a running project",
+    "arguments": [
+      {
+        "name": "projectName",
+        "description": "project name",
+        "mandatory": true
+      },
+      {
+        "name": "environment",
+        "description": "environment",
+        "mandatory": true
+      }
+    ]
+  },
+  {
+    "name": "install",
+    "description": "install the docker manager",
+    "arguments": []
+  },
+  {
+    "name": "projects",
+    "description": "list avaiable projects",
+    "arguments": []
+  },
+  {
+    "name": "ps",
+    "description": "list running projects",
+    "arguments": []
+  },
+  {
+    "name": "run",
+    "description": "run a project",
+    "arguments": [
+      {
+        "name": "projectName",
+        "description": "project name",
+        "mandatory": true
+      },
+      {
+        "name": "environment",
+        "description": "environment",
+        "mandatory": true
+      }
+    ]
+  },
+  {
+    "name": "add",
+    "description": "add a project",
+    "arguments": [
+      {
+        "name": "projectName",
+        "description": "project name",
+        "mandatory": true
+      },
+      {
+        "name": "repository",
+        "description": "repository (without the repostity base url)",
+        "mandatory": true
+      },
+      {
+        "name": "ports",
+        "description": "ports used by the project, separated by :",
+        "mandatory": false,
+        "defaultValue": ""
+      },
+      {
+        "name": "environmentVariable",
+        "description": "environment variable",
+        "mandatory": false,
+        "defaultValue": "ENVIRONMENT"
+      }
+    ]
+  }
+]
