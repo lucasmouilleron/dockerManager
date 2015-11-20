@@ -1,7 +1,7 @@
-githubManagementDocker
-======================
+dockerManager
+=============
 
-githubManagementDocker is a Docker deployment tool for github hosted projects.
+dockerManager is a Docker deployment tool for git versionned projects.
 Ideal for web agency testing.
 
 Concepts
@@ -29,6 +29,7 @@ Project compliancy
 
 TODO
 ----
+- cp files from container to host : docker cp CONTAINER:PATH HOSTPATH
 - API :
     - REST
     - tokens
@@ -36,6 +37,7 @@ TODO
     - list running projects
 - list images
 - Sharedfolder in buildImage
+- multiple git provider (github, some gitlabs)
     
 Thinking
 --------
