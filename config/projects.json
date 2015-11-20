@@ -25,18 +25,18 @@
         ]
     },
     {
-        "name": "otherothertest",
+        "name": "testproject",
         "repository": "testRepo",
         "ports": [
             [
                 8084,
-                34
+                "20"
             ],
             [
                 8085,
-                24
+                "21"
             ]
         ],
-        "environmentVariable": "testEnv"
+        "environmentVariable": "testEnvVariable"
     }
 ]

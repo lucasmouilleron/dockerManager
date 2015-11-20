@@ -102,8 +102,10 @@ class dockerManager
             }
             $result = run(makeCommand("docker", "rm", $this->containerID));
             if (!$result->success) throw new Exception(message("Can't remove docker container", $this->containerName, $this->containerID, $result->output));
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

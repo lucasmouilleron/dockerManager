@@ -27,8 +27,15 @@ Project compliancy
 - Project environment variable is by default passed in `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
 - Containers are ran as daemons 
 
+How to use
+----------
+- `bin/dm help`
+- API
+
 TODO
 ----
+- Improve dm commands output
+- Export : export project with export commands and copy to host (to recup files and db)
 - cp files from container to host : docker cp CONTAINER:PATH HOSTPATH
 - API :
     - REST

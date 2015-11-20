@@ -1,0 +1,5 @@
+<?php
+
+///////////////////////////////////////////////////////////////////////////////
+appendToLog(LG_MAIN, LG_INFO, "seting up the repo manager");
+$PM->reposManager->setup();
