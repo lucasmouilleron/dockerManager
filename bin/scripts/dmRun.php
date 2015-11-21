@@ -18,7 +18,7 @@ appendToLog(LG_MAIN, LG_INFO, "cloning repository", $repositoryInfos->repository
 $PM->cloneRepository($projectName);
 
 ///////////////////////////////////////////////////////////////////////////////
-appendToLog(LG_MAIN, LG_INFO, "build  project image for project", $projectName, "for environment", $environment);
-$PM->buildProject($projectName, $environment);
-appendToLog(LG_MAIN, LG_INFO, "start container for project", $projectName, "for environment", $environment);
+appendToLog(LG_MAIN, LG_INFO, "build  project image for project", $projectName);
+$PM->buildProject($projectName);
+appendToLog(LG_MAIN, LG_INFO, "start container for project", $projectName, "for environment", $environment, "for revision", $revision);
 $PM->startProject($projectName, $environment, $revision);

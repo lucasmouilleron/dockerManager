@@ -137,3 +137,9 @@ function removeDir($dir)
         rmdir($dir);
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+function startsWith($haystack, $needle)
+{
+    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+}

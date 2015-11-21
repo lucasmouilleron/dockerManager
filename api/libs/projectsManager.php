@@ -120,23 +120,22 @@ class projectsManager
         $runningContainers = $this->dockerManager->listRunningContainers();
         foreach ($runningContainers as $runningContainer) {
             $projectName = $this->getProjectNameFromImageName($runningContainer->imageName);
-            $environment = $this->getEnvironmentFromImageName($runningContainer->imageName);
-            $runningProjects[] = arrayToObject(array("projectInfos" => $this->getProjectInfos($projectName), "environment" => $environment));
+            $runningProjects[] = arrayToObject(array("projectInfos" => $this->getProjectInfos($projectName), "environment" => $runningContainer->environment, "revision" => $runningContainer->revision));
         }
         return $runningProjects;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function getImageNameFromProjet($name, $environment)
+    function getImageNameFromProjet($name)
     {
-        $this->dockerManager->setImageName($name . ":" . $environment);
+        $this->dockerManager->setImageName("dm:" . $name);
         return $this->dockerManager->imageName;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function getContainerNameFromProjet($name, $environment)
+    function getContainerNameFromProjet($name)
     {
-        $this->dockerManager->setContainerName($name . ":" . $environment);
+        $this->dockerManager->setContainerName("dm:" . $name);
         return $this->dockerManager->containerName;
     }
 
@@ -160,10 +159,10 @@ class projectsManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function buildProject($name, $environment)
+    function buildProject($name)
     {
         $infos = $this->getProjectInfos($name);
-        $imageName = $this->getImageNameFromProjet($name, $environment);
+        $imageName = $this->getImageNameFromProjet($name);
         $this->dockerManager->buildImageFromDockerFile($infos->dockerFile, $imageName);
         return true;
     }
@@ -172,16 +171,16 @@ class projectsManager
     function startProject($name, $environment, $revision)
     {
         $infos = $this->getProjectInfos($name);
-        $imageName = $this->getImageNameFromProjet($name, $environment);
-        $containerName = $this->getContainerNameFromProjet($name, $environment);
+        $imageName = $this->getImageNameFromProjet($name);
+        $containerName = $this->getContainerNameFromProjet($name);
         $this->dockerManager->startContainer($imageName, $containerName, array(array($infos->environmentVariable, $environment), array("REVISION", $revision)), $infos->ports);
         return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function stopProject($name, $environment)
+    function stopProject($name)
     {
-        $containerName = $this->getContainerNameFromProjet($name, $environment);
+        $containerName = $this->getContainerNameFromProjet($name);
         return $this->dockerManager->stopAndRemoveContainer($containerName);
     }
 
