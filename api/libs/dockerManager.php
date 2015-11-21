@@ -100,7 +100,6 @@ class dockerManager
                 $portsCommand .= " -p " . $port[0] . ":" . $port[1];
             }
         }
-        $envsCommand = "";
         foreach ($envs as $env) {
             if (count($env) == 2) {
                 $envsCommand .= " -e " . $env[0] . "=" . $env[1];

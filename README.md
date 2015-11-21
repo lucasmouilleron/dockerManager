@@ -26,7 +26,8 @@ Installation
 Project compliancy
 ------------------
 - `Dockerfile` must be in `PROJECT_ROOT/docker` folder
-- Project environment variable is by default passed in `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
+- Project should be cloned at the runtime of the docker container. The revision is passed in the `REVISION` env variable.
+- Project environment variable is by default passed in the `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
 - Containers are ran as daemons
 - Project `github.com:lucasmouilleron/dockerManagerTest` can be used for reference
 
@@ -37,6 +38,7 @@ How to use
 
 TODO
 ----
+- Pass REPOSITORY
 - Export : export project with export commands and copy to host (to recup files and db) (exports commands per project (mysqldump, cp folders in /tmp/export) first remove folder (docker exec rm the folder), then docker exec the exports commands, and then docker exec tgz the /tmp/export folder and then docker cp export.tgz to host) (- cp files from container to host : docker cp CONTAINER:PATH HOSTPATH)
 - Improve dm commands output
 - API :
@@ -50,6 +52,7 @@ TODO
     
 Thinking
 --------
+- For the Dockerfile and/or the docker container to be able to git clone the project, an ssh key must be provided. One solution is to embed the key in the repository. The key can be then associated to a user account (or to the repository deployment keys, which is a per project configuration) on the git repository provider.
 - On tester / client machines, use /etc/hosts or GasMask or HostMan so the production domain / URL points to the Docker server
 - Websites : 
 - Webapps : App environment at runtime ?

@@ -1,8 +1,9 @@
 <?php
 
 ///////////////////////////////////////////////////////////////////////////////
-$projectName = getArgument($COMMAND,$ARGUMENTS,0);
-$environment = getArgument($COMMAND,$ARGUMENTS,1);
+$projectName = getArgument($COMMAND, $ARGUMENTS, 0);
+$environment = getArgument($COMMAND, $ARGUMENTS, 1);
+$revision = getArgument($COMMAND, $ARGUMENTS, 2);
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,4 +21,4 @@ $PM->cloneRepository($projectName);
 appendToLog(LG_MAIN, LG_INFO, "build  project image for project", $projectName, "for environment", $environment);
 $PM->buildProject($projectName, $environment);
 appendToLog(LG_MAIN, LG_INFO, "start container for project", $projectName, "for environment", $environment);
-$PM->startProject($projectName, $environment);
+$PM->startProject($projectName, $environment, $revision);

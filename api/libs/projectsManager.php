@@ -169,12 +169,12 @@ class projectsManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function startProject($name, $environment)
+    function startProject($name, $environment, $revision)
     {
         $infos = $this->getProjectInfos($name);
         $imageName = $this->getImageNameFromProjet($name, $environment);
         $containerName = $this->getContainerNameFromProjet($name, $environment);
-        $this->dockerManager->startContainer($imageName, $containerName, array(array($infos->environmentVariable, $environment)), $infos->ports);
+        $this->dockerManager->startContainer($imageName, $containerName, array(array($infos->environmentVariable, $environment), array("REVISION", $revision)), $infos->ports);
         return true;
     }
 

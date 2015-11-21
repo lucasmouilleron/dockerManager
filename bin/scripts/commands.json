@@ -95,6 +95,12 @@
         "description": "environment",
         "mandatory": false,
         "defaultValue": "local"
+      },
+      {
+        "name": "revision",
+        "description": "revision",
+        "mandatory": false,
+        "defaultValue": "HEAD"
       }
     ]
   }
