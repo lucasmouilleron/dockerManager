@@ -19,9 +19,9 @@ Installation
 - Install Docker
 - Install php and composer
 - Create ssh key : `ssh-keygen -f ./config/id_rsa` and then give to repository provider (eg. github)
-- Edit `config/config.json` if needed
 - `composer install`
-- `php scripts/install.php`
+- Edit `config/config.json` if needed
+- `bin/dm install`
 
 Project compliancy
 ------------------

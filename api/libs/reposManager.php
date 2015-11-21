@@ -26,7 +26,8 @@ class reposManager
     function setup()
     {
         $result = run(makeCommand("eval", "`ssh-agent -s`"));
-        run(makeCommand("ssh-agent", "$(ssh-add " . $this->idRSAFile.")"));
+        if (!file_exists($this->idRSAFile)) throw new Exception(message("SSH key doest not exist", $this->idRSAFile, "generate the key and add it to the repository provider"));
+        run(makeCommand("ssh-agent", "$(ssh-add " . $this->idRSAFile . ")"));
         if (!$result->success) throw new Exception(message("Can't start ssh agent", $result->output));
         $result = run(makeCommand("ssh-keyscan", $this->repositoriesBase, ">>", "~/.ssh/known_hosts"));
         if (!$result->success) throw new Exception(message("Can't add repositories base to know hosts", $result->output));
