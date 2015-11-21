@@ -2,8 +2,10 @@
   "os": "MacOS",
   "dockerMachineName": "docker-vm",
   "repositoryBaseURL": "github.com",
-  "workBaseFolder": "/tmp",
   "dockerFolder": "docker",
   "defaultProjectEnvironmentVariable": "ENVIRONMENT",
-  "publicAutoPortOffset": 8080
+  "publicAutoPortOffset": 8080,
+  "workBaseFolder": "/tmp/repositories",
+  "guestExportFolder":"/tmp/export",
+  "hostExportFolder":"/tmp/export"
 }

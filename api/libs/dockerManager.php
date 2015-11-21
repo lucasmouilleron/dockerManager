@@ -87,7 +87,7 @@ class dockerManager
             $containerName = $bits[count($bits) - 1];
             $containerInfos = $this->getContainerInfos($containerName);
             $envs = $containerInfos->Config->Env;
-            $containers[] = arrayToObject(array("id" => $bits[0], "environment" => $this->getEnvVariable("ENVIRONMENT", $envs), "revision" => $this->getEnvVariable("REVISION", $envs), "imageName" => $bits[1], "containerName" => $containerName));
+            $containers[] = arrayToObject(array("id" => $bits[0], "envs" => $envs, "imageName" => $bits[1], "containerName" => $containerName));
         }
         return $containers;
     }
@@ -194,17 +194,6 @@ class dockerManager
     function setImageName($imageName)
     {
         $this->imageName = strtolower(preg_replace('/[^A-Za-z0-9\:]/', '', $imageName));
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    function getEnvVariable($envName, $envs)
-    {
-        foreach ($envs as $env) {
-            if (startsWith($env, $envName . "=")) {
-                return trim(str_replace($envName . "=", "", $env));
-            }
-        }
-        return "";
     }
 
 }

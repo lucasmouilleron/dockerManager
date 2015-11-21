@@ -35,12 +35,6 @@
         "name": "projectName",
         "description": "project name",
         "mandatory": true
-      },
-      {
-        "name": "environment",
-        "description": "environment",
-        "mandatory": false,
-        "defaultValue": "local"
       }
     ]
   },

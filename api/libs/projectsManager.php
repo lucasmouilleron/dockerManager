@@ -120,7 +120,8 @@ class projectsManager
         $runningContainers = $this->dockerManager->listRunningContainers();
         foreach ($runningContainers as $runningContainer) {
             $projectName = $this->getProjectNameFromImageName($runningContainer->imageName);
-            $runningProjects[] = arrayToObject(array("projectInfos" => $this->getProjectInfos($projectName), "environment" => $runningContainer->environment, "revision" => $runningContainer->revision));
+            $projectInfos = $this->getProjectInfos($projectName);
+            $runningProjects[] = arrayToObject(array("projectInfos" => $projectInfos, "environment" => $this->getEnvVariable($projectInfos->environmentVariable, $runningContainer->envs), "revision" => $this->getEnvVariable("REVISION", $runningContainer->envs)));
         }
         return $runningProjects;
     }
@@ -141,12 +142,6 @@ class projectsManager
 
     ///////////////////////////////////////////////////////////////////////////////
     function getProjectNameFromImageName($imageName)
-    {
-        return explode(":", $imageName)[0];
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    function getEnvironmentFromImageName($imageName)
     {
         return explode(":", $imageName)[1];
     }
@@ -188,5 +183,16 @@ class projectsManager
     function stopAllProjects()
     {
         return $this->dockerManager->stopAllContainers();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function getEnvVariable($envName, $envs)
+    {
+        foreach ($envs as $env) {
+            if (startsWith($env, $envName . "=")) {
+                return trim(str_replace($envName . "=", "", $env));
+            }
+        }
+        return "";
     }
 }
