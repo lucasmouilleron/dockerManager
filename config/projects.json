@@ -1,10 +1,21 @@
 [
   {
+    "name": "test",
+    "repository": "lucasmouilleron\/dockerManagerTest",
+    "ports": [
+      [
+        9000,
+        80
+      ]
+    ],
+    "environmentVariable": "ENVIRONMENT"
+  },
+  {
     "name": "tsdcwui",
     "repository": "lucasmouilleron\/TSDataCenterWebUI",
     "ports": [
       [
-        8081,
+        9001,
         80
       ]
     ],
@@ -15,24 +26,13 @@
     "repository": "lucasmouilleron\/TSDataCenterWebUI",
     "ports": [
       [
-        8082,
+        9002,
         80
       ],
       [
-        8083,
+        9003,
         443
       ]
     ]
-  },
-  {
-    "name": "test",
-    "repository": "lucasmouilleron\/dockerManagerTest",
-    "ports": [
-      [
-        8084,
-        80
-      ]
-    ],
-    "environmentVariable": "ENVIRONMENT"
   }
 ]

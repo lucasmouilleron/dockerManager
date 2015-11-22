@@ -14,7 +14,7 @@ $PROJECTS_CONFIG_FILE = __DIR__ . "/../../config/projects.json";
 
 ///////////////////////////////////////////////////////////////////////////////
 $CONFIG = jsonFileToObject($CONFIG_FILE);
-$DM = new dockerManager($CONFIG->os, $CONFIG->dockerMachineName);
+$DM = new dockerManager($CONFIG->os, $CONFIG->dockerMachineName, $CONFIG->guestExportFolder, $CONFIG->hostExportFolder);
 $RM = new reposManager($CONFIG->repositoryBaseURL, makePath($CONFIG_FOLDER, "id_rsa"), $CONFIG->workBaseFolder, $CONFIG->dockerFolder);
 $PM = new projectsManager($RM, $DM, $PROJECTS_CONFIG_FILE, $CONFIG->defaultProjectEnvironmentVariable, $CONFIG->publicAutoPortOffset);
 

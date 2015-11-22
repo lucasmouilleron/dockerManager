@@ -29,11 +29,13 @@ Project compliancy
 - Project should be cloned at the runtime of the docker container. The revision is passed in the `REVISION` env variable.
 - Project environment variable is by default passed in the `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
 - Containers are ran as daemons
+- Containers should not expose ports above `config/config.json > publicAutoPortOffset`
 - Project `github.com:lucasmouilleron/dockerManagerTest` can be used for reference
 
 How to use
 ----------
 - `bin/dm` and follow instructions
+- Run the test project : `bin/dm run test`, `bin/dm run test local` or `bin/dm run test preprod` and then go to the 
 - API, TODO
 
 TODO

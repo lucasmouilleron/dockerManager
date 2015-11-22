@@ -13,15 +13,19 @@ class dockerManager
     public $containerName;
     public $containerID;
     public $os;
+    public $guestExportFolder;
+    public $hostExportFolder;
 
     ///////////////////////////////////////////////////////////////////////////////
     protected static $envVarPattern = '#export (.*?)\=\"(.*?)\"#';
 
     ///////////////////////////////////////////////////////////////////////////////
-    function __construct($os = "linux", $docherMachineName = "default")
+    function __construct($os = "linux", $docherMachineName = "default", $guestExportFolder = "/tmp/export", $hostExportFolder = "/tmp/export")
     {
         $this->os = strtolower($os);
         $this->dockerMachineName = $docherMachineName;
+        $this->guestExportFolder = $guestExportFolder;
+        $this->hostExportFolder = $hostExportFolder;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
