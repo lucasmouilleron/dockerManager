@@ -4,7 +4,7 @@ dockerManager
 dockerManager is a Docker deployment tool for git versionned projects.
 Ideal for web agency testing.
 
-![Screenshot](http://grabs.lucasmouilleron.com/Screen%20Shot%202015-11-20%20at%2012.14.24.png)
+![Screenshot](http://grabs.lucasmouilleron.com/Screen%20Shot%202015-11-22%20at%2018.06.54.png)
 
 Concepts
 --------
