@@ -60,18 +60,26 @@ class projectsManager
                 if (isset($project->environmentVariable)) {
                     $projectEnvironmentVariable = $project->environmentVariable;
                 }
-                return arrayToObject(array("environmentVariable" => $projectEnvironmentVariable, "name" => $project->name, "repository" => $project->repository, "cloneFolder" => $this->reposManager->cloneFolder, "ports" => $project->ports, "dockerFile" => makePath($this->reposManager->cloneFolder, $this->reposManager->dockerFolder, "DockerFile")));
+                $projectExportCommands = array();
+                if (isset($project->exportCommands)) {
+                    $projectExportCommands = $project->exportCommands;
+                }
+                $projectExportFilesAndFolders = array();
+                if (isset($project->exportFilesAndFolders)) {
+                    $projectExportFilesAndFolders = $project->exportFilesAndFolders;
+                }
+                return arrayToObject(array("name" => $project->name, "repository" => $project->repository, "cloneFolder" => $this->reposManager->cloneFolder, "ports" => $project->ports, "dockerFile" => makePath($this->reposManager->cloneFolder, $this->reposManager->dockerFolder, "DockerFile"), "environmentVariable" => $projectEnvironmentVariable, "exportCommands" => $projectExportCommands, "exportFilesAndFolders" => $projectExportFilesAndFolders));
             }
         }
         throw new Exception(message("Project does not exist", $name));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function isProjectRunning($name, $environment)
+    function isProjectRunning($name)
     {
         $projectsRunning = $this->getRunningProjects();
         foreach ($projectsRunning as $projectRunning) {
-            if ($projectRunning->environment == $environment && $projectRunning->projectInfos->name == $name) {
+            if ($projectRunning->projectInfos->name == $name) {
                 return true;
             }
         }
@@ -160,6 +168,24 @@ class projectsManager
         $imageName = $this->getImageNameFromProjet($name);
         $this->dockerManager->buildImageFromDockerFile($infos->dockerFile, $imageName);
         return true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function exportProject($name)
+    {
+        if ($this->isProjectRunning($name)) {
+            $containerName = $this->getContainerNameFromProjet($name);
+            $infos = $this->getProjectInfos($name);
+            foreach ($infos->exportCommands as $exportCommand) {
+                $this->dockerManager->executeCommand($containerName, $exportCommand);
+            }
+            foreach ($infos->exportFilesAndFolders as $exportFileOrFolder) {
+                $this->dockerManager->exportFileOfFolder($containerName, $exportFileOrFolder);
+            }
+            return $this->dockerManager->compressAndGetExportFolder($containerName);
+        } else {
+            throw new Exception(message("Project is not running", $name));
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

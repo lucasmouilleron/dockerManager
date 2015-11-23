@@ -8,7 +8,14 @@
         80
       ]
     ],
-    "environmentVariable": "ENVIRONMENT"
+    "environmentVariable": "ENVIRONMENT",
+    "exportCommands": [
+      "mysqldump --databases main > /tmp/main.sql"
+    ],
+    "exportFilesAndFolders": [
+      "/var/www/html/data",
+      "/tmp/main.sql"
+    ]
   },
   {
     "name": "tsdcwui",

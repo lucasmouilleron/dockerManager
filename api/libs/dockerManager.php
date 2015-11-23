@@ -138,6 +138,47 @@ class dockerManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    function executeCommand($containerName, $command)
+    {
+        $this->setContainerName($containerName);
+        $this->containerID = $this->getContainerID($this->containerName);
+        $result = run(makeCommand("docker", "exec", $this->containerID, $command));
+        if (!$result->success) throw new Exception(message("Can't execute command on container", $this->containerName, $this->containerID, $command, $result->output));
+        return $result;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function exportFileOfFolder($containerName, $fileOrFolder)
+    {
+        $this->containerID = $this->getContainerID($this->containerName);
+        $result = run(makeCommand("docker", "exec", $this->containerID, "mkdir", "-p", $this->guestExportFolder));
+        if (!$result->success) throw new Exception(message("Can't create export folder on container", $this->containerName, $this->containerID, $result->output));
+        return $this->executeCommand($containerName, "cp -r " . $fileOrFolder . " " . $this->guestExportFolder);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function compressAndGetExportFolder($containerName)
+    {
+        $this->setContainerName($containerName);
+        $this->containerID = $this->getContainerID($this->containerName);
+        $zipFileName = $this->containerName . "Export.tgz";
+        $tmpZipFile = makePath("tmp", $zipFileName);
+        $finalZipFile = makePath($this->guestExportFolder, $zipFileName);
+        $hostZipFile = makePath($this->hostExportFolder, $zipFileName);
+        $result = $this->executeCommand($containerName, "tar -czf " . $tmpZipFile . " " . $this->guestExportFolder);
+        if (!$result->success) throw new Exception(message("Can't zip export folder on container", $this->containerName, $this->containerID, $result->output));
+        $result = $this->executeCommand($containerName, "rm -rf " . $this->guestExportFolder . "/*");
+        if (!$result->success) throw new Exception(message("Can't clean export folder on container", $this->containerName, $this->containerID, $result->output));
+        $result = $this->executeCommand($containerName, "mv " . $tmpZipFile . " " . $this->guestExportFolder . "/");
+        if (!$result->success) throw new Exception(message("Can't move export folder on container", $this->containerName, $this->containerID, $result->output));
+        $result = run(makeCommand("mkdir", "-p", $this->hostExportFolder));
+        if (!$result->success) throw new Exception(message("Can't make export dir on host", $this->hostExportFolder));
+        $result = run(makeCommand("docker", "cp", $this->containerID . ":" . $finalZipFile, $hostZipFile));
+        if (!$result->success) throw new Exception(message("Can't copy export zip file from container", $this->containerName, $this->containerID, $result->output));
+        return $hostZipFile;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     function removeOldContainers()
     {
         $result = run(makeCommand("docker", "ps", "-aq", "-f", "status=exited"));

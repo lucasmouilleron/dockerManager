@@ -15,6 +15,12 @@ date_default_timezone_set("Europe/Paris");
 use Colors\Color;
 
 ////////////////////////////////////////////////////////////////
+function setDebugMode($debug)
+{
+    define("DEBUG", $debug);
+}
+
+////////////////////////////////////////////////////////////////
 function appendToLog($logger, $level, $message)
 {
     $args = func_get_args();
@@ -75,7 +81,7 @@ function run($command)
     $code = -1;
     $args = func_get_args();
     if (count($args) > 1) $command = implode(" ", $args);
-    $command .= " 2>&1";
+    if (!DEBUG) $command .= " 2>&1";
     appendToLog(LG_MAIN, LG_FNE, "running command", $command);
     //ob_start();
     $moreOutput = exec($command, $output, $code);
