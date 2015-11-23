@@ -12,7 +12,7 @@ Concepts
 - Project ports and shared folder configuration 
 - Project environment variable for runtime environment context (and not at buildtime)
 - Project add wizard (auto port offseting)
-- TODO
+- Export containers files or folders of projects to the dockerManager host (see `exportCommnds` and `exportFilesAndFolders`)
 
 Installation
 ------------
