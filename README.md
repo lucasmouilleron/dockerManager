@@ -41,7 +41,6 @@ How to use
 TODO
 ----
 - Explain export
-- Export : export project with export commands and copy to host (to recup files and db) (exports commands per project (mysqldump, cp folders in /tmp/export) first remove folder (docker exec rm the folder), then docker exec the exports commands, and then docker exec tgz the /tmp/export folder and then docker cp export.tgz to host) (- cp files from container to host : docker cp CONTAINER:PATH HOSTPATH)
 - Improve dm commands output
 - API :
     - REST

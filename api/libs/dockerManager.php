@@ -113,7 +113,9 @@ class dockerManager
                 $envsCommand .= " -e " . $env[0] . "=" . $env[1];
             }
         }
-        $this->stopAndRemoveContainer($this->containerName);
+        if ($this->containerIsRunning($this->containerName)) {
+            $this->stopAndRemoveContainer($this->containerName);
+        }
         $result = run(makeCommand("docker", "run", "--name", $this->containerName, "-ti", "-d", $portsCommand, $envsCommand, $this->imageName));
         if (!$result->success) throw new Exception(message("Can't run docker container", $this->containerName, $result->output));
         return $this->containerName;
@@ -142,7 +144,7 @@ class dockerManager
     {
         $this->setContainerName($containerName);
         $this->containerID = $this->getContainerID($this->containerName);
-        $result = run(makeCommand("docker", "exec", $this->containerID, $command));
+        $result = run(makeCommand("docker", "exec", $this->containerID, "sh -c \"" . $command . "\""));
         if (!$result->success) throw new Exception(message("Can't execute command on container", $this->containerName, $this->containerID, $command, $result->output));
         return $result;
     }
@@ -214,7 +216,7 @@ class dockerManager
         $this->setContainerName($containerName);
         if (!$this->containerExists($this->containerName)) return false;
         $infos = $this->getContainerInfos($this->containerName);
-        if ($infos->State->Running) {
+        if (isset($infos) && isset($infos->State) && $infos->State->Running) {
             return true;
         } else {
             return false;
@@ -226,7 +228,7 @@ class dockerManager
     {
         $this->setContainerName($containerName);
         $result = run(makeCommand("docker", "inspect", $this->containerName));
-        return json_decode($result->rawOutput, false)[0];
+        return @json_decode($result->rawOutput, false)[0];
     }
 
     ///////////////////////////////////////////////////////////////////////////////

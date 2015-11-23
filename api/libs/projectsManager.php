@@ -129,7 +129,7 @@ class projectsManager
         foreach ($runningContainers as $runningContainer) {
             $projectName = $this->getProjectNameFromImageName($runningContainer->imageName);
             $projectInfos = $this->getProjectInfos($projectName);
-            $runningProjects[] = arrayToObject(array("projectInfos" => $projectInfos, "environment" => $this->getEnvVariable($projectInfos->environmentVariable, $runningContainer->envs), "revision" => $this->getEnvVariable("REVISION", $runningContainer->envs)));
+            $runningProjects[] = arrayToObject(array("projectInfos" => $projectInfos, "id" => $runningContainer->id, "environment" => $this->getEnvVariable($projectInfos->environmentVariable, $runningContainer->envs), "revision" => $this->getEnvVariable("REVISION", $runningContainer->envs)));
         }
         return $runningProjects;
     }

@@ -10,11 +10,11 @@
     ],
     "environmentVariable": "ENVIRONMENT",
     "exportCommands": [
-      "mysqldump --databases main > /tmp/main.sql"
+      "mysqldump --databases main > /tmp/dump.sql"
     ],
     "exportFilesAndFolders": [
       "/var/www/html/data",
-      "/tmp/main.sql"
+      "/tmp/dump.sql"
     ]
   },
   {
