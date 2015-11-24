@@ -16,7 +16,7 @@ Concepts
 
 Installation
 ------------
-- Install Docker (on MacOS or Windows, install `docker-machin` and install a machine named `config/config.json > dockerMachineName`)
+- Install Docker (on MacOS or Windows, install `docker-machine` and install a machine named `config/config.json > dockerMachineName`)
 - Install php and composer
 - Create ssh key : `ssh-keygen -f ./config/id_rsa` and then give to repository provider (eg. github)
 - `composer install`
@@ -37,6 +37,12 @@ How to use
 - `bin/dm` and follow instructions
 - Run the test project : `bin/dm run test`, `bin/dm run test local` or `bin/dm run test preprod` and then go to the 
 - API, TODO
+    
+Thinking
+--------
+- For the Dockerfile and/or the docker container to be able to git clone the project, an ssh key must be provided. One solution is to embed the key in the repository. The key can be then associated to a user account (or to the repository deployment keys, which is a per project configuration) on the git repository provider.
+- On tester / client machines, use /etc/hosts or GasMask or HostMan so the production domain / URL points to the Docker server
+- Webapps : App environment at runtime ?
 
 TODO
 ----
@@ -47,13 +53,5 @@ TODO
     - tokens
     - start and stop projects
     - list running projects
-- list images
 - Sharedfolder in buildImage
 - multiple git provider (github, some gitlabs)
-    
-Thinking
---------
-- For the Dockerfile and/or the docker container to be able to git clone the project, an ssh key must be provided. One solution is to embed the key in the repository. The key can be then associated to a user account (or to the repository deployment keys, which is a per project configuration) on the git repository provider.
-- On tester / client machines, use /etc/hosts or GasMask or HostMan so the production domain / URL points to the Docker server
-- Websites : 
-- Webapps : App environment at runtime ?
