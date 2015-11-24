@@ -1,11 +1,11 @@
 <?php
 
 ///////////////////////////////////////////////////////////////////////////////
-require_once __DIR__ . "/../../api/libs/vendor/autoload.php";
-require_once __DIR__ . "/../../api/libs/dockerManager.php";
-require_once __DIR__ . "/../../api/libs/reposManager.php";
-require_once __DIR__ . "/../../api/libs/projectsManager.php";
-require_once __DIR__ . "/../../api/libs/tools.php";
+require_once __DIR__ . "/libs/vendor/autoload.php";
+require_once __DIR__ . "/libs/dockerManager.php";
+require_once __DIR__ . "/libs/reposManager.php";
+require_once __DIR__ . "/libs/projectsManager.php";
+require_once __DIR__ . "/libs/tools.php";
 
 ///////////////////////////////////////////////////////////////////////////////
 $CONFIG_FOLDER = __DIR__ . "/../../config";

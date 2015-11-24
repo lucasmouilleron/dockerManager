@@ -6,6 +6,6 @@
     "kevinlebrun/colors.php": "0.*"
   },
   "config": {
-    "vendor-dir": "api/libs/vendor"
+    "vendor-dir": "bin/scripts/libs/vendor"
   }
 }

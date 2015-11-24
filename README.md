@@ -16,7 +16,7 @@ Concepts
 
 Installation
 ------------
-- Install Docker
+- Install Docker (on MacOS or Windows, install `docker-machin` and install a machine named `config/config.json > dockerMachineName`)
 - Install php and composer
 - Create ssh key : `ssh-keygen -f ./config/id_rsa` and then give to repository provider (eg. github)
 - `composer install`
