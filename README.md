@@ -30,9 +30,16 @@ Project compliancy
 - Project environment variable is by default passed in the `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
 - Containers are ran as daemons
 - Containers should not expose ports above `config/config.json > publicAutoPortOffset`
-- Project can be deloyed localy (`"URI":"local"` in `config/projects.jon`, or remotely : `"URI":"user@host"`)
+
 - Project `github.com:lucasmouilleron/dockeranagerTest` can be used for reference
 - Projects are configured in `config/projects.json`
+
+Local VS Remote deployment
+--------------------------
+- Target deployment hosts are defined per project in `config/config.json > URI`
+- Project can be deloyed localy :`"URI":"local"` 
+- Or remotely : `"URI":"user@host"`
+- In the case of remote hosts, make sure to `ssh-copy-id` the `URI` so remote calls won't need password typing
 
 How to use
 ----------
