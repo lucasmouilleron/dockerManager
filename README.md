@@ -30,7 +30,8 @@ Project compliancy
 - Project environment variable is by default passed in the `ENVIRONMENT` env variable, which can be override in project configuration attribute `environmentVariable`
 - Containers are ran as daemons
 - Containers should not expose ports above `config/config.json > publicAutoPortOffset`
-- Project `github.com:lucasmouilleron/dockerManagerTest` can be used for reference
+- Project can be deloyed localy (`"URI":"local"` in `config/projects.jon`, or remotely : `"URI":"user@host"`)
+- Project `github.com:lucasmouilleron/dockeranagerTest` can be used for reference
 - Projects are configured in `config/projects.json`
 
 How to use
