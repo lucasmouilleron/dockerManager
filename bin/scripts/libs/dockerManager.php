@@ -15,9 +15,11 @@ class dockerManager
     public $os;
     public $guestExportFolder;
     public $hostExportFolder;
+    public $dockerBinFolder;
 
     ///////////////////////////////////////////////////////////////////////////////
     protected static $envVarPattern = '#export (.*?)\=\"(.*?)\"#';
+    protected static $tmpFile = "/tmp/dm";
 
     ///////////////////////////////////////////////////////////////////////////////
     function __construct($os = "linux", $docherMachineName = "default", $guestExportFolder = "/tmp/export", $hostExportFolder = "/tmp/export")
@@ -26,15 +28,42 @@ class dockerManager
         $this->dockerMachineName = $docherMachineName;
         $this->guestExportFolder = $guestExportFolder;
         $this->hostExportFolder = $hostExportFolder;
+        //$this->dockerBinFolder = "/usr/local/bin";
+        $this->dockerBinFolder = "";
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function makeDockerCommand()
+    {
+        if ($this->dockerBinFolder == "") {
+            $baseCommand = "docker";
+        } else {
+            $baseCommand = makePath($this->$this->dockerBinFolder, "docker");
+        }
+        if ($this->os == "macos" || $this->os == "windows") {
+            return ". " . dockerManager::$tmpFile . ";" . $baseCommand;
+        } else {
+            return $baseCommand;
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function makeDockerMachineCommand()
+    {
+        if ($this->dockerBinFolder == "") {
+            return "docker-machine";
+        } else {
+            return makePath($this->$this->dockerBinFolder, "docker-machine");
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     function start()
     {
         if ($this->os == "macos" || $this->os == "windows") {
-            $result = run(makeCommand("docker-machine", "start", $this->dockerMachineName));
+            $result = run(makeCommand($this->makeDockerMachineCommand(), "start", $this->dockerMachineName));
             if (!$result->success) throw new Exception("Can't start docker machine : " . $result->output);
-            $result = run("docker-machine env " . $this->dockerMachineName);
+            $result = run(makeCommand($this->makeDockerMachineCommand(), "env " . $this->dockerMachineName, ">", dockerManager::$tmpFile));
             if (!$result->success) throw new Exception(message("Can't start docker machine", $result->output));
             foreach ($result->output as $output) {
                 preg_match(dockerManager::$envVarPattern, $output, $matches);
@@ -50,7 +79,7 @@ class dockerManager
     {
         $this->stopAllContainers();
         if ($this->os == "macos") {
-            $result = run(makeCommand("docker-machine", "stop", $this->dockerMachineName));
+            $result = run(makeCommand($this->makeDockerMachineCommand(), "stop", $this->dockerMachineName));
             if (!$result->success) throw new Exception("Can't stop docker machine : " . $result->output);
         }
     }
@@ -73,8 +102,7 @@ class dockerManager
         $this->dockerFile = $dockerFile;
         $this->dockerFolder = dirname($this->dockerFile);
         $this->setImageName($imageName);
-        chdir($this->dockerFolder);
-        $result = run(makeCommand("docker", "build", "-t", $this->imageName, "."));
+        $result = run(makeCommand("cd", $this->dockerFolder, ";", $this->makeDockerCommand(), "build", "-t", $this->imageName, "."));
         if (!$result->success) throw new Exception(message("Can't build docker image", $result->output));
         return $this->imageName;
     }
@@ -83,7 +111,7 @@ class dockerManager
     function listRunningContainers()
     {
         $containers = array();
-        $result = run(makeCommand("docker", "ps"));
+        $result = run(makeCommand($this->makeDockerCommand(), "ps"));
         $outputs = $result->output;
         array_shift($outputs);
         foreach ($outputs as $output) {
@@ -116,7 +144,7 @@ class dockerManager
         if ($this->containerIsRunning($this->containerName)) {
             $this->stopAndRemoveContainer($this->containerName);
         }
-        $result = run(makeCommand("docker", "run", "--name", $this->containerName, "-ti", "-d", $portsCommand, $envsCommand, $this->imageName));
+        $result = run(makeCommand($this->makeDockerCommand(), "run", "--name", $this->containerName, "-ti", "-d", $portsCommand, $envsCommand, $this->imageName));
         if (!$result->success) throw new Exception(message("Can't run docker container", $this->containerName, $result->output));
         return $this->containerName;
     }
@@ -128,10 +156,10 @@ class dockerManager
         $this->containerID = $this->getContainerID($this->containerName);
         if ($this->containerID !== 0) {
             if ($this->containerIsRunning($this->containerName)) {
-                $result = run(makeCommand("docker", "kill", $this->containerID));
+                $result = run(makeCommand($this->makeDockerCommand(), "kill", $this->containerID));
                 if (!$result->success) throw new Exception(message("Can't kill docker container", $this->containerName, $this->containerID, $result->output));
             }
-            $result = run(makeCommand("docker", "rm", $this->containerID));
+            $result = run(makeCommand($this->makeDockerCommand(), "rm", $this->containerID));
             if (!$result->success) throw new Exception(message("Can't remove docker container", $this->containerName, $this->containerID, $result->output));
             return true;
         } else {
@@ -144,7 +172,7 @@ class dockerManager
     {
         $this->setContainerName($containerName);
         $this->containerID = $this->getContainerID($this->containerName);
-        $result = run(makeCommand("docker", "exec", $this->containerID, "sh -c \"" . $command . "\""));
+        $result = run(makeCommand($this->makeDockerCommand(), "exec", $this->containerID, "sh -c \"" . $command . "\""));
         if (!$result->success) throw new Exception(message("Can't execute command on container", $this->containerName, $this->containerID, $command, $result->output));
         return $result;
     }
@@ -153,7 +181,7 @@ class dockerManager
     function exportFileOfFolder($containerName, $fileOrFolder)
     {
         $this->containerID = $this->getContainerID($this->containerName);
-        $result = run(makeCommand("docker", "exec", $this->containerID, "mkdir", "-p", $this->guestExportFolder));
+        $result = run(makeCommand($this->makeDockerCommand(), "exec", $this->containerID, "mkdir", "-p", $this->guestExportFolder));
         if (!$result->success) throw new Exception(message("Can't create export folder on container", $this->containerName, $this->containerID, $result->output));
         return $this->executeCommand($containerName, "cp -r " . $fileOrFolder . " " . $this->guestExportFolder);
     }
@@ -175,7 +203,7 @@ class dockerManager
         if (!$result->success) throw new Exception(message("Can't move export folder on container", $this->containerName, $this->containerID, $result->output));
         $result = run(makeCommand("mkdir", "-p", $this->hostExportFolder));
         if (!$result->success) throw new Exception(message("Can't make export dir on host", $this->hostExportFolder));
-        $result = run(makeCommand("docker", "cp", $this->containerID . ":" . $finalZipFile, $hostZipFile));
+        $result = run(makeCommand($this->makeDockerCommand(), "cp", $this->containerID . ":" . $finalZipFile, $hostZipFile));
         if (!$result->success) throw new Exception(message("Can't copy export zip file from container", $this->containerName, $this->containerID, $result->output));
         return $hostZipFile;
     }
@@ -183,10 +211,10 @@ class dockerManager
     ///////////////////////////////////////////////////////////////////////////////
     function removeOldContainers()
     {
-        $result = run(makeCommand("docker", "ps", "-aq", "-f", "status=exited"));
+        $result = run(makeCommand($this->makeDockerCommand(), "ps", "-aq", "-f", "status=exited"));
         if (!$result->success) throw new Exception(message("Can't remove old containers", $result->output));
         if (count($result->output) > 0) {
-            $result = run(makeCommand("docker", "rm", "$(docker ps -aq -f status=exited)"));
+            $result = run(makeCommand($this->makeDockerCommand(), "rm", "$(docker ps -aq -f status=exited)"));
             if (!$result->success) throw new Exception(message("Can't remove old containers", $result->output));
             return $result->output;
         } else {
@@ -227,7 +255,7 @@ class dockerManager
     function getContainerInfos($containerName)
     {
         $this->setContainerName($containerName);
-        $result = run(makeCommand("docker", "inspect", $this->containerName));
+        $result = run(makeCommand($this->makeDockerCommand(), "inspect", $this->containerName));
         return @json_decode($result->rawOutput, false)[0];
     }
 

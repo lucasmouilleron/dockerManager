@@ -75,23 +75,40 @@ function message()
 }
 
 ////////////////////////////////////////////////////////////////
-function run($command)
+function runRemote($uri, $command)
 {
     $output = array();
     $code = -1;
     $args = func_get_args();
-    if (count($args) > 1) $command = implode(" ", $args);
+    array_shift($args);
+    $command = implode(" ", $args);
     if (!DEBUG) $command .= " 2>&1";
     appendToLog(LG_MAIN, LG_FNE, "running command", $command);
-    //ob_start();
-    $moreOutput = exec($command, $output, $code);
-    //$moremoreoutput = ob_get_clean();
+    $sshCommand = "ssh " . $uri . " bash --login -c \"'" . $command . "'\"";
+    $moreOutput = exec($sshCommand, $output, $code);
     $ouput[] = $moreOutput;
     $rawOutput = "";
     foreach ($output as $outputLine) {
         $rawOutput .= $outputLine . "\n";
     }
-    //$ouput[] = $moremoreoutput;
+    return arrayToObject(array("code" => $code, "output" => $output, "rawOutput" => $rawOutput, "success" => ($code == 0)));
+}
+
+////////////////////////////////////////////////////////////////
+function run($command)
+{
+    $output = array();
+    $code = -1;
+    $args = func_get_args();
+    //$command = implode(" ", $args);
+    if (!DEBUG) $command .= " 2>&1";
+    appendToLog(LG_MAIN, LG_FNE, "running command", $command);
+    $moreOutput = exec($command, $output, $code);
+    $ouput[] = $moreOutput;
+    $rawOutput = "";
+    foreach ($output as $outputLine) {
+        $rawOutput .= $outputLine . "\n";
+    }
     return arrayToObject(array("code" => $code, "output" => $output, "rawOutput" => $rawOutput, "success" => ($code == 0)));
 }
 

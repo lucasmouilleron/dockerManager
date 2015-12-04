@@ -43,6 +43,7 @@ Thinking
 - For the Dockerfile and/or the docker container to be able to git clone the project, an ssh key must be provided. One solution is to embed the key in the repository. The key can be then associated to a user account (or to the repository deployment keys, which is a per project configuration) on the git repository provider.
 - On tester / client machines, use /etc/hosts or GasMask or HostMan so the production domain / URL points to the Docker server
 - Webapps : App environment at runtime ?
+- Websites : Avoid absolute urls, so the port is forwarded to the next page.
 
 TODO
 ----
