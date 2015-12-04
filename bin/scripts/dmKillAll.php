@@ -1,9 +1,21 @@
 <?php
 
 ///////////////////////////////////////////////////////////////////////////////
-appendToLog(LG_MAIN, LG_INFO, "starting docker", $DM->dockerMachineName);
-$PM->startDocker();
+$runningProjects = $PM->getRunningProjects();
+appendToLog(LG_MAIN, LG_INFO, "# running projects", count($runningProjects));
 
 ///////////////////////////////////////////////////////////////////////////////
-$nbSroped = $PM->stopAllProjects();
-appendToLog(LG_MAIN, LG_INFO, "# project stopped", $nbSroped);
+foreach ($runningProjects as $runningProject) {
+    $projectName = $runningProject->projectInfos->name;
+    appendToLog(LG_MAIN, LG_INFO, "setting project", $projectName);
+    $PM->setProject($projectName);
+    appendToLog(LG_MAIN, LG_INFO, "starting docker", $PM->dockerManager->dockerMachineName);
+    $PM->startDocker();
+    if ($PM->stopProject($projectName)) {
+        appendToLog(LG_MAIN, LG_INFO, "project stopped", $projectName);
+    } else {
+        appendToLog(LG_MAIN, LG_WARNING, "project NOT stopped", $projectName);
+    }
+}
+
+

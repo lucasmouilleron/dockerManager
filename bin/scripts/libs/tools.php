@@ -79,12 +79,9 @@ function runRemote($uri, $command)
 {
     $output = array();
     $code = -1;
-    $args = func_get_args();
-    array_shift($args);
-    $command = implode(" ", $args);
     if (!DEBUG) $command .= " 2>&1";
-    appendToLog(LG_MAIN, LG_FNE, "running command", $command);
     $sshCommand = "ssh " . $uri . " bash --login -c \"'" . $command . "'\"";
+    appendToLog(LG_MAIN, LG_FNE, "running command", $sshCommand);
     $moreOutput = exec($sshCommand, $output, $code);
     $ouput[] = $moreOutput;
     $rawOutput = "";
@@ -95,12 +92,21 @@ function runRemote($uri, $command)
 }
 
 ////////////////////////////////////////////////////////////////
-function run($command)
+function run($uri, $command)
+{
+    if ($uri == "local") {
+        return runLocal($command);
+    } else {
+        $command = addslashes($command);
+        return runRemote($uri, $command);
+    }
+}
+
+////////////////////////////////////////////////////////////////
+function runLocal($command)
 {
     $output = array();
     $code = -1;
-    $args = func_get_args();
-    //$command = implode(" ", $args);
     if (!DEBUG) $command .= " 2>&1";
     appendToLog(LG_MAIN, LG_FNE, "running command", $command);
     $moreOutput = exec($command, $output, $code);

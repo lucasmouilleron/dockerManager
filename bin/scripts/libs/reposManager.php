@@ -25,11 +25,11 @@ class reposManager
     ///////////////////////////////////////////////////////////////////////////////
     function setup()
     {
-        $result = run(makeCommand("eval", "`ssh-agent -s`"));
+        $result = runLocal(makeCommand("eval", "`ssh-agent -s`"));
         if (!file_exists($this->idRSAFile)) throw new Exception(message("SSH key doest not exist", $this->idRSAFile, "generate the key and add it to the repository provider"));
-        run(makeCommand("ssh-agent", "$(ssh-add " . $this->idRSAFile . ")"));
+        runLocal(makeCommand("ssh-agent", "$(ssh-add " . $this->idRSAFile . ")"));
         if (!$result->success) throw new Exception(message("Can't start ssh agent", $result->output));
-        $result = run(makeCommand("ssh-keyscan", $this->repositoriesBase, ">>", "~/.ssh/known_hosts"));
+        $result = runLocal(makeCommand("ssh-keyscan", $this->repositoriesBase, ">>", "~/.ssh/known_hosts"));
         if (!$result->success) throw new Exception(message("Can't add repositories base to know hosts", $result->output));
     }
 
@@ -40,7 +40,7 @@ class reposManager
         if (file_exists($this->cloneFolder)) {
             removeDir($this->cloneFolder);
         }
-        $result = run(makeCommand("ssh-agent", "$(git clone --verbose --progress --depth=1 git@" . $this->repositoriesBase . ":" . $repository . " " . $this->cloneFolder . ")"));
+        $result = runLocal(makeCommand("ssh-agent", "$(git clone --verbose --progress --depth=1 git@" . $this->repositoriesBase . ":" . $repository . " " . $this->cloneFolder . ")"));
         if (!$result->success) throw new Exception(message("Can't clone repository", $result->output));
     }
 

@@ -2,23 +2,21 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 $projectName = getArgument($COMMAND, $ARGUMENTS, 0);
-$environment = getArgument($COMMAND, $ARGUMENTS, 1);
-$revision = getArgument($COMMAND, $ARGUMENTS, 2);
-
+$revision = getArgument($COMMAND, $ARGUMENTS, 1);
 
 ///////////////////////////////////////////////////////////////////////////////
-appendToLog(LG_MAIN, LG_INFO, "starting docker", $DM->dockerMachineName);
-$PM->startDocker();
+appendToLog(LG_MAIN, LG_INFO, "setting project", $projectName);
+$PM->setProject($projectName);
 
 ///////////////////////////////////////////////////////////////////////////////
 $repositoryInfos = $PM->getProjectInfos($projectName);
 
 ///////////////////////////////////////////////////////////////////////////////
-appendToLog(LG_MAIN, LG_INFO, "cloning repository", $repositoryInfos->repository, "for projcet", $projectName);
-$PM->cloneRepository($projectName);
+appendToLog(LG_MAIN, LG_INFO, "starting docker", $PM->dockerManager->dockerMachineName . "@" . $PM->dockerManager->hostURI);
+$PM->startDocker();
 
 ///////////////////////////////////////////////////////////////////////////////
 appendToLog(LG_MAIN, LG_INFO, "build  project image for project", $projectName);
 $PM->buildProject($projectName);
-appendToLog(LG_MAIN, LG_INFO, "start container for project", $projectName, "for environment", $environment, "for revision", $revision);
-$PM->startProject($projectName, $environment, $revision);
+appendToLog(LG_MAIN, LG_INFO, "start container for project", $projectName, "for revision", $revision);
+$PM->startProject($projectName, $revision);

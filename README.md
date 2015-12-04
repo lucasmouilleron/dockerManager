@@ -1,14 +1,14 @@
 dockerManager
 =============
 
-dockerManager is a Docker deployment tool for git versionned projects.
+dockerManager is a local and remote Docker deployment tool for git versionned projects.
 Ideal for web agency testing.
 
 ![Screenshot](http://grabs.lucasmouilleron.com/Screen%20Shot%202015-11-23%20at%2019.33.15.png)
 
 Concepts
 --------
-- Local Docker deployment for github projects
+- Local and remote Docker deployment for github projects
 - Project ports and shared folder configuration 
 - Project environment variable for runtime environment context (and not at buildtime)
 - Project add wizard (auto port offseting)
@@ -16,7 +16,7 @@ Concepts
 
 Installation
 ------------
-- Install Docker (on MacOS or Windows, install `docker-machine` and install a machine named `config/config.json > dockerMachineName`)
+- Install Docker on target hosts (on MacOS, install `docker-machine` and install a machine named `config/config.json > defaultDockerMachineName`)
 - Install php and composer
 - Create ssh key : `ssh-keygen -f ./config/id_rsa` and then give to repository provider (eg. github)
 - `composer install`
@@ -31,11 +31,12 @@ Project compliancy
 - Containers are ran as daemons
 - Containers should not expose ports above `config/config.json > publicAutoPortOffset`
 - Project `github.com:lucasmouilleron/dockerManagerTest` can be used for reference
+- Projects are configured in `config/projects.json`
 
 How to use
 ----------
 - `bin/dm` and follow instructions
-- Run the test project : `bin/dm run test`, `bin/dm run test local` or `bin/dm run test preprod` and then go to the 
+- Run the test project : `bin/dm run test`, `bin/dm run test REVISION_NUMBER` 
 - API, TODO
     
 Thinking

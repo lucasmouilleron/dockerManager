@@ -2,13 +2,35 @@
   {
     "name": "test",
     "repository": "lucasmouilleron\/dockerManagerTest",
+    "environmentVariable": "ENVIRONMENT",
+    "environmentVariableValue": "local",
     "ports": [
       [
         9000,
         80
       ]
     ],
+    "exportCommands": [
+      "mysqldump --databases main > /tmp/dump.sql"
+    ],
+    "exportFilesAndFolders": [
+      "/var/www/html/data",
+      "/tmp/dump.sql"
+    ]
+  },
+  {
+    "name": "othertest",
+    "repository": "lucasmouilleron\/dockerManagerTest",
+    "OS": "MacOS",
+    "URI": "lucas@imac.lucasmouilleron.com",
     "environmentVariable": "ENVIRONMENT",
+    "environmentVariableValue": "preprod",
+    "ports": [
+      [
+        9001,
+        80
+      ]
+    ],
     "exportCommands": [
       "mysqldump --databases main > /tmp/dump.sql"
     ],
@@ -22,7 +44,7 @@
     "repository": "lucasmouilleron\/TSDataCenterWebUI",
     "ports": [
       [
-        9001,
+        9002,
         80
       ]
     ],
@@ -33,11 +55,11 @@
     "repository": "lucasmouilleron\/TSDataCenterWebUI",
     "ports": [
       [
-        9002,
+        9003,
         80
       ],
       [
-        9003,
+        9004,
         443
       ]
     ]

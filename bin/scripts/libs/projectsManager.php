@@ -12,18 +12,24 @@ class projectsManager
     public $reposManager;
     public $projects;
     public $projectsFile;
-    public $defaultEnvironmentVariable;
-    public $publicAutoPortOffset;
+    public $config;
+    public $defaultDockerMachineName;
 
     ///////////////////////////////////////////////////////////////////////////////
-    function __construct($reposManager, $dockerManager, $projectsFile, $defaultEnvironmentVariable, $publicAutoPortOffset)
+    function __construct($projectsFile, $configFile)
     {
-        $this->dockerManager = $dockerManager;
-        $this->reposManager = $reposManager;
+        $this->configFile = $configFile;
         $this->projectsFile = $projectsFile;
+        $this->config = jsonFileToObject($this->configFile);
         $this->projects = jsonFileToObject($this->projectsFile);
-        $this->defaultEnvironmentVariable = $defaultEnvironmentVariable;
-        $this->publicAutoPortOffset = $publicAutoPortOffset;
+        $this->reposManager = new reposManager($this->config->repositoryBaseURL, makePath($this->configFile, "id_rsa"), $this->config->workBaseFolder, $this->config->dockerFolder);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    function setProject($name)
+    {
+        $infos = $this->getProjectInfos($name);
+        $this->dockerManager = new dockerManager($infos->URI, $infos->OS, $this->config->defaultDockerMachineName, $this->config->guestExportFolder, $this->config->hostExportFolder);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -56,7 +62,19 @@ class projectsManager
         foreach ($this->projects as $project) {
             if ($project->name == $name) {
                 $this->reposManager->setRepository($project->repository);
-                $projectEnvironmentVariable = $this->defaultEnvironmentVariable;
+                $projectEnvironmentVariableValue = "";
+                if (isset($project->environmentVariableValue)) {
+                    $projectEnvironmentVariableValue = $project->environmentVariableValue;
+                }
+                $OS = $this->config->defaultOS;
+                if (isset($project->OS)) {
+                    $OS = $project->OS;
+                }
+                $URI = $this->config->defaultURI;
+                if (isset($project->URI)) {
+                    $URI = $project->URI;
+                }
+                $projectEnvironmentVariable = $this->config->defaultEnvironmentVariable;
                 if (isset($project->environmentVariable)) {
                     $projectEnvironmentVariable = $project->environmentVariable;
                 }
@@ -68,7 +86,7 @@ class projectsManager
                 if (isset($project->exportFilesAndFolders)) {
                     $projectExportFilesAndFolders = $project->exportFilesAndFolders;
                 }
-                return arrayToObject(array("name" => $project->name, "repository" => $project->repository, "cloneFolder" => $this->reposManager->cloneFolder, "ports" => $project->ports, "dockerFile" => makePath($this->reposManager->cloneFolder, $this->reposManager->dockerFolder, "DockerFile"), "environmentVariable" => $projectEnvironmentVariable, "exportCommands" => $projectExportCommands, "exportFilesAndFolders" => $projectExportFilesAndFolders));
+                return arrayToObject(array("name" => $project->name, "repository" => $project->repository, "cloneFolder" => $this->reposManager->cloneFolder, "ports" => $project->ports, "dockerFile" => makePath($this->reposManager->cloneFolder, $this->reposManager->dockerFolder, "DockerFile"), "environmentVariable" => $projectEnvironmentVariable, "environmentVariableValue" => $projectEnvironmentVariableValue, "exportCommands" => $projectExportCommands, "exportFilesAndFolders" => $projectExportFilesAndFolders, "URI" => $URI, "OS" => $OS));
             }
         }
         throw new Exception(message("Project does not exist", $name));
@@ -77,6 +95,7 @@ class projectsManager
     ///////////////////////////////////////////////////////////////////////////////
     function isProjectRunning($name)
     {
+        //TODO OPTIIMZIE GET RUNNING PROECT FOR URI
         $projectsRunning = $this->getRunningProjects();
         foreach ($projectsRunning as $projectRunning) {
             if ($projectRunning->projectInfos->name == $name) {
@@ -87,7 +106,7 @@ class projectsManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function addProject($name, $repository, $ports = array(), $environmentVariable = "")
+    function addProject($name, $repository, $ports = array(), $environmentVariable = "", $environmentVariableValue = "", $URI = "", $OS = "")
     {
         $name = strtolower($name);
         foreach ($this->projects as $project) {
@@ -95,8 +114,14 @@ class projectsManager
                 return false;
             }
         }
+        if ($URI == "") {
+            $URI = $this->config->defaultURI;
+        }
+        if ($OS == "") {
+            $OS = $this->config->defaultOS;
+        }
         if ($environmentVariable == "") {
-            $environmentVariable = $this->defaultEnvironmentVariable;
+            $environmentVariable = $this->config->defaultEnvironmentVariable;
         }
         $usedPorts = array();
         foreach ($this->projects as $project) {
@@ -107,7 +132,7 @@ class projectsManager
             }
         }
         sort($usedPorts);
-        $nextPort = $this->defaultEnvironmentVariable;
+        $nextPort = $this->config->publicAutoPortOffset;
         if (count($usedPorts) != 0) {
             $nextPort = $usedPorts[count($usedPorts) - 1] + 1;
         }
@@ -116,7 +141,7 @@ class projectsManager
             $portsAndTranslations[] = array($nextPort, $port);
             $nextPort++;
         }
-        $this->projects[] = arrayToObject(array("name" => $name, "repository" => $repository, "ports" => $portsAndTranslations, "environmentVariable" => $environmentVariable));
+        $this->projects[] = arrayToObject(array("name" => $name, "repository" => $repository, "ports" => $portsAndTranslations, "environmentVariable" => $environmentVariable, "environmentVariableValue" => $environmentVariableValue, "URI" => $URI, "OS" => $OS));
         $this->saveProjects();
         return true;
     }
@@ -124,14 +149,23 @@ class projectsManager
     ///////////////////////////////////////////////////////////////////////////////
     function getRunningProjects()
     {
-        $runningProjects = array();
-        $runningContainers = $this->dockerManager->listRunningContainers();
-        foreach ($runningContainers as $runningContainer) {
-            $projectName = $this->getProjectNameFromImageName($runningContainer->imageName);
-            $projectInfos = $this->getProjectInfos($projectName);
-            $runningProjects[] = arrayToObject(array("projectInfos" => $projectInfos, "id" => $runningContainer->id, "environment" => $this->getEnvVariable($projectInfos->environmentVariable, $runningContainer->envs), "revision" => $this->getEnvVariable("REVISION", $runningContainer->envs)));
+        $lastPojectOfURIMap = array();
+        foreach ($this->projects as $project) {
+            $infos = $this->getProjectInfos($project->name);
+            $lastPojectOfURIMap[$infos->URI] = $project;
         }
-        return $runningProjects;
+        $runningProjectsMap = array();
+        foreach (array_values($lastPojectOfURIMap) as $project) {
+            $infos = $this->getProjectInfos($project->name);
+            $tempDM = new dockerManager($infos->URI, $infos->OS, $this->config->defaultDockerMachineName, $this->config->guestExportFolder, $this->config->hostExportFolder);
+            $runningContainers = $tempDM->listRunningContainers();
+            foreach ($runningContainers as $runningContainer) {
+                $projectName = $this->getProjectNameFromImageName($runningContainer->imageName);
+                $projectInfos = $this->getProjectInfos($projectName);
+                $runningProjectsMap[$projectName] = arrayToObject(array("projectInfos" => $projectInfos, "id" => $runningContainer->id, "environment" => $this->getEnvVariable($projectInfos->environmentVariable, $runningContainer->envs), "revision" => $this->getEnvVariable("REVISION", $runningContainer->envs)));
+            }
+        }
+        return array_values($runningProjectsMap);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -165,6 +199,13 @@ class projectsManager
     function buildProject($name)
     {
         $infos = $this->getProjectInfos($name);
+        $this->cloneRepository($name);
+        if ($infos->URI != "local") {
+            $result = run($infos->URI, makeCommand("mkdir", "-p", $infos->cloneFolder));
+            if (!$result->success) throw new Exception(message("Can't create clone folder", $result->output));
+            $result = runLocal(makeCommand("scp", "-r", makePath($infos->cloneFolder, $this->reposManager->dockerFolder), $infos->URI . ":" . makePath($infos->cloneFolder, $this->reposManager->dockerFolder)));
+            if (!$result->success) throw new Exception(message("Can't copy docker folder", $result->output));
+        }
         $imageName = $this->getImageNameFromProjet($name);
         $this->dockerManager->buildImageFromDockerFile($infos->dockerFile, $imageName);
         return true;
@@ -189,12 +230,12 @@ class projectsManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function startProject($name, $environment, $revision)
+    function startProject($name, $revision)
     {
         $infos = $this->getProjectInfos($name);
         $imageName = $this->getImageNameFromProjet($name);
         $containerName = $this->getContainerNameFromProjet($name);
-        $this->dockerManager->startContainer($imageName, $containerName, array(array($infos->environmentVariable, $environment), array("REVISION", $revision)), $infos->ports);
+        $this->dockerManager->startContainer($imageName, $containerName, array(array($infos->environmentVariable, $infos->environmentVariableValue), array("REVISION", $revision)), $infos->ports);
         return true;
     }
 
@@ -206,9 +247,14 @@ class projectsManager
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    function stopAllProjects()
+    function projectExists($name)
     {
-        return $this->dockerManager->stopAllContainers();
+        foreach ($this->projects as $project) {
+            if ($project->name == $name) {
+                return true;
+            }
+        }
+        return false;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
